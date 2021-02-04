@@ -19,9 +19,9 @@ func responseParamError(c *gin.Context) {
 
 func responseDefaultFail(c *gin.Context, msg interface{}) {
 	if msg != nil {
-		response(c, common.CODE_FAIL_REQUEST, common.GetResponseMsg(common.CODE_FAIL_REQUEST), nil)
+		response(c, common.CODE_FAIL_REQUEST, common.GetResponseMsg(common.CODE_FAIL_REQUEST), msg)
+		return
 	}
-
 	response(c, common.CODE_FAIL_REQUEST, msg, nil)
 }
 

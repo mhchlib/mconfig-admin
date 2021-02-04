@@ -3,34 +3,24 @@ package service
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
-	"github.com/mhchlib/mconfig-admin/pkg/common"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
 	"strconv"
 )
 
-type AddAppRequest struct {
-	Name string `form:"name"`
-	Key  string `form:"key"`
-	Desc string `form:"desc"`
+type AddClusterRequest struct {
+	Namespace string `form:"namespace"`
+	Register  string `form:"register"`
+	Desc      string `form:"desc"`
 }
 
-func AddApp(c *gin.Context) {
-	param := &AddAppRequest{}
+func AddCluster(c *gin.Context) {
+	param := &AddClusterRequest{}
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)
 		return
 	}
-	if param.Key == "" {
-		param.Key = "app_" + common.GenKey()
-	} else {
-		unique := model.CheckAppKeyUnique(param.Key)
-		if !unique {
-			responseDefaultFail(c, "app key重复")
-			return
-		}
-	}
-	err = model.InsertApp(param.Name, param.Desc, param.Key)
+	err = model.InsertCluster(param.Namespace, param.Register, param.Desc)
 	if err != nil {
 		log.Error(err)
 		responseDefaultFail(c, nil)
@@ -40,23 +30,23 @@ func AddApp(c *gin.Context) {
 	return
 }
 
-type ListAppRequest struct {
+type ListClusterRequest struct {
 	Filter string `form:"filter"`
 	Limit  int    `form:"limit"`
 	Offset int    `form:"offset"`
 }
 
-type ListAppResponse struct {
+type ListClusterResponse struct {
 	Id         int    `json:"id"`
-	Name       string `json:"name"`
+	Namespace  string `json:"namespace"`
+	Register   string `json:"register"`
 	Desc       string `json:"desc"`
-	Key        string `json:"key"`
 	CreateTime int64  `json:"create_time"`
 	UpdateTime int64  `json:"update_time"`
 }
 
-func ListApp(c *gin.Context) {
-	param := &ListAppRequest{}
+func ListCluster(c *gin.Context) {
+	param := &ListClusterRequest{}
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)
@@ -65,16 +55,16 @@ func ListApp(c *gin.Context) {
 	if param.Limit == 0 {
 		param.Limit = DEFAULT_LIST_LIMIT
 	}
-	apps, err := model.ListApps(param.Filter, param.Limit, param.Offset)
-	data := make([]*ListAppResponse, 0)
-	for _, app := range apps {
-		data = append(data, &ListAppResponse{
-			Id:         app.Id,
-			Name:       app.Name,
-			Desc:       app.Description,
-			Key:        app.Key,
-			CreateTime: app.CreateTime,
-			UpdateTime: app.UpdateTime,
+	clusters, err := model.ListClusters(param.Filter, param.Limit, param.Offset)
+	data := make([]*ListClusterResponse, 0)
+	for _, cluster := range clusters {
+		data = append(data, &ListClusterResponse{
+			Id:         cluster.Id,
+			Namespace:  cluster.Namespace,
+			Desc:       cluster.Description,
+			Register:   cluster.Register,
+			CreateTime: cluster.CreateTime,
+			UpdateTime: cluster.UpdateTime,
 		})
 	}
 	if err != nil {
@@ -85,7 +75,7 @@ func ListApp(c *gin.Context) {
 	return
 }
 
-func DeleteAPP(c *gin.Context) {
+func DeleteCluster(c *gin.Context) {
 	id := c.Param("id")
 	log.Info(id)
 	atoi, err := strconv.Atoi(id)
@@ -93,7 +83,7 @@ func DeleteAPP(c *gin.Context) {
 		responseParamError(c)
 		return
 	}
-	err = model.DeleteApp(atoi)
+	err = model.DeleteCluster(atoi)
 	if err != nil {
 		responseDefaultFail(c, "删除失败")
 		return
@@ -101,26 +91,27 @@ func DeleteAPP(c *gin.Context) {
 	responseDefaultSuccess(c, nil)
 }
 
-type UpdateAppRequest struct {
-	Name string `form:"name"`
-	Desc string `form:"desc"`
+type UpdateClusterRequest struct {
+	Namespace string `form:"namespace"`
+	Register  string `form:"register"`
+	Desc      string `form:"desc"`
 }
 
-func UpdateApp(c *gin.Context) {
+func UpdateCluster(c *gin.Context) {
 	id := c.Param("id")
-	param := &UpdateAppRequest{}
+	param := &UpdateClusterRequest{}
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)
 		return
 	}
-	log.Info("update", id, param.Name, param.Desc)
+	log.Info("update", id, param.Namespace, param.Register, param.Desc)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
 		responseParamError(c)
 		return
 	}
-	err = model.UpdateApp(atoi, param.Name, param.Desc)
+	err = model.UpdateCluster(atoi, param.Namespace, param.Register, param.Desc)
 	if err != nil {
 		responseDefaultFail(c, "更新失败")
 		return

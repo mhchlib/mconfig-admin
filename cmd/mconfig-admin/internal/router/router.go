@@ -12,20 +12,41 @@ func AddRouters(engine *gin.Engine) {
 
 func addV1Routers(group *gin.RouterGroup) {
 	v1 := group.Group("v1")
-
 	//app
 	app := v1.Group("/app")
-	app.POST("/", service.AddApp)
+	app.POST("", service.AddApp)
 	app.GET("/list", service.ListApp)
-	//app.DELETE("/:id", service.DeleteApp)
+	app.DELETE("/:id", service.DeleteAPP)
+	app.PUT("/:id", service.UpdateApp)
+
+	//env
+	env := v1.Group("/env")
+	env.POST("/", service.AddEnv)
+	env.GET("/list", service.ListEnv)
+	env.DELETE("/:id", service.DeleteEnv)
+	env.PUT("/filter/:id", service.UpdateEnvFilter)
+	env.PUT("/base/:id", service.UpdateEnv)
+
+	//filter
+	filter := v1.Group("/filter")
+	filter.POST("/", service.AddFilter)
+	filter.PUT("/", service.UpdateFilter)
+	filter.GET("/:id", service.GetFilter)
 
 	//config
 	config := v1.Group("/config")
 	config.POST("/", service.AddConfig)
-	config.GET("/:id", service.GetConfigById)
+	config.GET("/list", service.ListConfig)
 	config.DELETE("/:id", service.DeleteConfig)
+	config.PUT("/base/:id", service.UpdateConfig)
+	config.PUT("/val/:id", service.UpdateConfigVal)
+	config.PUT("/schema/:id", service.UpdateConfigSchema)
+	config.PUT("/all/:id", service.UpdateConfigValAndConfig)
 
-	//filter
-
-	//log
+	//cluster
+	cluster := v1.Group("/cluster")
+	cluster.POST("", service.AddCluster)
+	cluster.GET("/list", service.ListCluster)
+	cluster.DELETE("/:id", service.DeleteCluster)
+	cluster.PUT("/:id", service.UpdateCluster)
 }
