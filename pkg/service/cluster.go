@@ -4,6 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/register"
+	"github.com/mhchlib/register/reg"
 	"strconv"
 )
 
@@ -117,5 +119,40 @@ func UpdateCluster(c *gin.Context) {
 		return
 	}
 	responseDefaultSuccess(c, nil)
+	return
+}
+
+type GetClusterRepsonse struct {
+	*model.Cluster
+	Services []*reg.ServiceVal `json:"services"`
+}
+
+func GetCluster(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		responseParamError(c)
+		return
+	}
+	response := &GetClusterRepsonse{}
+	cluster, err := model.GetCluster(id)
+	if err != nil {
+		responseDefaultFail(c, "获取失败")
+		return
+	}
+	response.Cluster = cluster
+
+	//获取services
+	regClient, err := register.InitRegister(func(options *reg.Options) {
+		options.RegisterStr = cluster.Register
+		options.NameSpace = cluster.Namespace
+	})
+	if err != nil {
+		responseDefaultFail(c, err)
+		return
+	}
+	services, err := regClient.ListAllServices("mconfig-server")
+	response.Services = services
+	responseDefaultSuccess(c, response)
 	return
 }

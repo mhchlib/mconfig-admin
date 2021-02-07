@@ -23,9 +23,10 @@ func (Config) TableName() string {
 	return "m_config"
 }
 
-func InsertConfig(app int, name, desc, key string) error {
+func InsertConfig(app int, env int, name, desc, key string) error {
 	create := db.Create(&Config{
 		App:         app,
+		Env:         env,
 		Name:        name,
 		Key:         key,
 		Description: desc,
@@ -43,10 +44,10 @@ func CheckConfigKeyUnique(app int, env int, key string) bool {
 	return true
 }
 
-func ListConfigs(app int, filter string, limit int, offset int) ([]*Config, error) {
+func ListConfigs(app int, env int, filter string, limit int, offset int) ([]*Config, error) {
 	configs := make([]*Config, 0)
 	fields := []string{"id", "config_name", "description", "config_key", "config_value", "config_schema", "create_time", "update_time"}
-	find := db.Select(fields).Where("app_id = ? and (config_name LIKE ? or description LIKE ?)", app, "%"+filter+"%", "%"+filter+"%").Order("update_time desc").Limit(limit).Offset(offset).Find(&configs)
+	find := db.Select(fields).Where("app_id = ? and env_id = ?  and (config_name LIKE ? or description LIKE ?)", app, env, "%"+filter+"%", "%"+filter+"%").Order("update_time desc").Limit(limit).Offset(offset).Find(&configs)
 	if find.Error != nil {
 		return nil, find.Error
 	}
@@ -115,4 +116,15 @@ func UpdateConfigValAndConfig(id int, val string, schema string) error {
 		return update.Error
 	}
 	return nil
+}
+
+func GetConfig(id int) (*Config, error) {
+	f := &Config{
+		Id: id,
+	}
+	data := db.Where("id = ?", f.Id).Find(f)
+	if data.Error != nil {
+		return nil, data.Error
+	}
+	return f, nil
 }

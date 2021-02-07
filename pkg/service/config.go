@@ -32,11 +32,11 @@ func AddConfig(c *gin.Context) {
 	} else {
 		unique := model.CheckConfigKeyUnique(param.App, param.Env, param.Key)
 		if !unique {
-			responseDefaultFail(c, "Config key重复")
+			responseDefaultFail(c, "config key重复")
 			return
 		}
 	}
-	err = model.InsertConfig(param.App, param.Name, param.Desc, param.Key)
+	err = model.InsertConfig(param.App, param.Env, param.Name, param.Desc, param.Key)
 	if err != nil {
 		log.Error(err)
 		responseDefaultFail(c, nil)
@@ -83,7 +83,7 @@ func ListConfig(c *gin.Context) {
 	if param.Limit == 0 {
 		param.Limit = DEFAULT_LIST_LIMIT
 	}
-	Configs, err := model.ListConfigs(param.App, param.Filter, param.Limit, param.Offset)
+	Configs, err := model.ListConfigs(param.App, param.Env, param.Filter, param.Limit, param.Offset)
 	data := make([]*ListConfigResponse, 0)
 	for _, Config := range Configs {
 		data = append(data, &ListConfigResponse{

@@ -5,14 +5,14 @@ import (
 )
 
 type Cluster struct {
-	Id          int    `gorm:"primary_key,column:id"`
-	Namespace   string `gorm:"column:namespace" `
-	Register    string `gorm:"column:register" `
-	Description string `gorm:"column:description"`
-	CreateUser  int    `gorm:"column:create_user"`
-	UpdateUser  int    `gorm:"column:update_user"`
-	CreateTime  int64  `gorm:"column:create_time"`
-	UpdateTime  int64  `gorm:"column:update_time"`
+	Id          int    `gorm:"primary_key,column:id" json:"id"`
+	Namespace   string `gorm:"column:namespace"  json:"namespace"`
+	Register    string `gorm:"column:register"  json:"register"`
+	Description string `gorm:"column:description" json:"description"`
+	CreateUser  int    `gorm:"column:create_user" json:"create_user"`
+	UpdateUser  int    `gorm:"column:update_user" json:"update_user"`
+	CreateTime  int64  `gorm:"column:create_time" json:"create_time"`
+	UpdateTime  int64  `gorm:"column:update_time" json:"update_time"`
 }
 
 func (Cluster) TableName() string {
@@ -63,4 +63,15 @@ func UpdateCluster(id int, namespace string, register string, desc string) error
 		return update.Error
 	}
 	return nil
+}
+
+func GetCluster(id int) (*Cluster, error) {
+	f := &Cluster{
+		Id: id,
+	}
+	data := db.Where("id = ?", f.Id).Find(f)
+	if data.Error != nil {
+		return nil, data.Error
+	}
+	return f, nil
 }

@@ -47,6 +47,18 @@ func addV1Routers(group *gin.RouterGroup) {
 	cluster := v1.Group("/cluster")
 	cluster.POST("", service.AddCluster)
 	cluster.GET("/list", service.ListCluster)
+	cluster.GET("/self/:id", service.GetCluster)
 	cluster.DELETE("/:id", service.DeleteCluster)
 	cluster.PUT("/:id", service.UpdateCluster)
+
+	//deploy
+	deploy := v1.Group("/deploy")
+	deploy.POST("/config", service.DeployConfig)
+
+	//service
+	ser := v1.Group("/service")
+	ser.POST("/detail", service.GetServiceDetail)
+	ser.POST("/", service.UpdateServiceDetail)
+	ser.POST("/delete", service.DeleteServiceItem)
+
 }

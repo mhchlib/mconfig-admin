@@ -71,3 +71,14 @@ func UpdateApp(id int, name string, desc string) error {
 	}
 	return nil
 }
+
+func GetApp(id int) (*App, error) {
+	f := &App{
+		Id: id,
+	}
+	data := db.Where("id = ?", f.Id).Find(f)
+	if data.Error != nil {
+		return nil, data.Error
+	}
+	return f, nil
+}

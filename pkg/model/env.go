@@ -97,3 +97,14 @@ func UpdateEnvFilter(id int, filter int) error {
 	}
 	return nil
 }
+
+func GetEnv(id int) (*Env, error) {
+	f := &Env{
+		Id: id,
+	}
+	data := db.Where("id = ?", f.Id).Find(f)
+	if data.Error != nil {
+		return nil, data.Error
+	}
+	return f, nil
+}
