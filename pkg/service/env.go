@@ -9,15 +9,16 @@ import (
 )
 
 type AddEnvRequest struct {
-	App    int    `form:"app"`
+	App    int    `form:"app"  binding:"required"`
 	Filter string `form:"filter"`
-	Name   string `form:"name"`
+	Name   string `form:"name"  binding:"required"`
 	Key    string `form:"key"`
+	Weight int    `json:"weight"`
 	Desc   string `form:"desc"`
 }
 
 func AddEnv(c *gin.Context) {
-	param := &AddEnvRequest{}
+	var param AddEnvRequest
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)
@@ -36,7 +37,7 @@ func AddEnv(c *gin.Context) {
 			return
 		}
 	}
-	err = model.InsertEnv(param.App, param.Name, param.Desc, param.Key, param.Filter)
+	err = model.InsertEnv(param.App, param.Name, param.Desc, param.Key, param.Filter, param.Weight)
 	if err != nil {
 		log.Error(err)
 		responseDefaultFail(c, nil)
@@ -58,6 +59,7 @@ type ListEnvResponse struct {
 	Name       string `json:"name"`
 	Desc       string `json:"desc"`
 	Key        string `json:"key"`
+	Weight     int    `json:"weight"`
 	Filter     int    `json:"filter"`
 	CreateTime int64  `json:"create_time"`
 	UpdateTime int64  `json:"update_time"`
@@ -85,6 +87,7 @@ func ListEnv(c *gin.Context) {
 			Name:       env.Name,
 			Desc:       env.Description,
 			Key:        env.Key,
+			Weight:     env.Weight,
 			Filter:     env.Filter,
 			CreateTime: env.CreateTime,
 			UpdateTime: env.UpdateTime,
@@ -115,8 +118,9 @@ func DeleteEnv(c *gin.Context) {
 }
 
 type UpdateEnvRequest struct {
-	Name string `form:"name"`
-	Desc string `form:"desc"`
+	Name   string `form:"name"`
+	Desc   string `form:"desc"`
+	Weight int    `json:"weight"`
 }
 
 func UpdateEnv(c *gin.Context) {
@@ -127,13 +131,13 @@ func UpdateEnv(c *gin.Context) {
 		responseParamError(c)
 		return
 	}
-	log.Info("update", idStr, param.Name, param.Desc)
+	log.Info("update", idStr, param.Name, param.Desc, param.Weight)
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		responseParamError(c)
 		return
 	}
-	err = model.UpdateEnv(id, param.Name, param.Desc)
+	err = model.UpdateEnv(id, param.Name, param.Desc, param.Weight)
 	if err != nil {
 		responseDefaultFail(c, "更新失败")
 		return

@@ -9,15 +9,15 @@ import (
 )
 
 type AddConfigRequest struct {
-	App  int    `form:"app"`
-	Env  int    `form:"env"`
-	Name string `form:"name"`
+	App  int    `form:"app" binding:"required"`
+	Env  int    `form:"env" binding:"required"`
+	Name string `form:"name" binding:"required"`
 	Key  string `form:"key"`
 	Desc string `form:"desc"`
 }
 
 func AddConfig(c *gin.Context) {
-	param := &AddConfigRequest{}
+	var param AddConfigRequest
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)

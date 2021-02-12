@@ -12,6 +12,10 @@ func AddRouters(engine *gin.Engine) {
 
 func addV1Routers(group *gin.RouterGroup) {
 	v1 := group.Group("v1")
+	//dashboard
+	dashboard := v1.Group("/dashboard")
+	dashboard.GET("/", service.Dashboard)
+
 	//app
 	app := v1.Group("/app")
 	app.POST("", service.AddApp)
@@ -31,7 +35,8 @@ func addV1Routers(group *gin.RouterGroup) {
 	filter := v1.Group("/filter")
 	filter.POST("/", service.AddFilter)
 	filter.PUT("/", service.UpdateFilter)
-	filter.GET("/:id", service.GetFilter)
+	filter.GET("/modes", service.GetFilterMode)
+	filter.GET("/base/:id", service.GetFilter)
 
 	//config
 	config := v1.Group("/config")
@@ -61,4 +66,10 @@ func addV1Routers(group *gin.RouterGroup) {
 	ser.POST("/", service.UpdateServiceDetail)
 	ser.POST("/delete", service.DeleteServiceItem)
 
+	//tag
+	tag := v1.Group("/tag")
+	tag.POST("", service.BuildTag)
+	tag.GET("/list", service.ListTag)
+	tag.GET("/self/:id", service.GetTag)
+	tag.DELETE("/:id", service.DeleteTag)
 }

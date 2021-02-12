@@ -128,3 +128,12 @@ func GetConfig(id int) (*Config, error) {
 	}
 	return f, nil
 }
+
+func CountConfig() (interface{}, error) {
+	var count int
+	c := db.Model(&Config{}).Count(&count)
+	if c.Error != nil {
+		return nil, c.Error
+	}
+	return count, nil
+}

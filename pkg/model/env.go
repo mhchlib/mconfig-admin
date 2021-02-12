@@ -9,6 +9,7 @@ type Env struct {
 	App         int    `gorm:"column:app_id"`
 	Name        string `gorm:"column:env_name" `
 	Key         string `gorm:"column:env_key"`
+	Weight      int    `gorm:"column:weight"`
 	Description string `gorm:"column:description"`
 	Filter      int    `gorm:"column:filter"`
 	CreateUser  int    `gorm:"column:create_user"`
@@ -21,11 +22,11 @@ func (Env) TableName() string {
 	return "m_env"
 }
 
-func InsertEnv(app int, name, desc, key, filter string) error {
+func InsertEnv(app int, name, desc, key, filter string, weight int) error {
 	var insertFilterId int
 	insertFilterId = -1
 	if filter != "" {
-		id, err := InsertFilter(TYPE_FILTER_LUA, filter)
+		id, err := InsertFilter(Mode_FILTER_LUA, filter)
 		if err != nil {
 			return err
 		}
@@ -35,6 +36,7 @@ func InsertEnv(app int, name, desc, key, filter string) error {
 		App:         app,
 		Name:        name,
 		Key:         key,
+		Weight:      weight,
 		Filter:      insertFilterId,
 		Description: desc,
 		CreateTime:  time.Now().Unix(),
@@ -52,13 +54,13 @@ func CheckEnvKeyUnique(app int, key string) bool {
 }
 
 func ListEnvs(app int, filter string, limit int, offset int) ([]*Env, error) {
-	Envs := make([]*Env, 0)
-	fields := []string{"id", "env_name", "description", "env_key", "filter", "create_time", "update_time"}
-	find := db.Select(fields).Where("app_id = ? and (env_name LIKE ? or description LIKE ?)", app, "%"+filter+"%", "%"+filter+"%").Order("update_time desc").Limit(limit).Offset(offset).Find(&Envs)
+	envs := make([]*Env, 0)
+	fields := []string{"id", "env_name", "description", "env_key", "weight", "filter", "create_time", "update_time"}
+	find := db.Select(fields).Where("app_id = ? and (env_name LIKE ? or description LIKE ?)", app, "%"+filter+"%", "%"+filter+"%").Order("update_time desc").Limit(limit).Offset(offset).Find(&envs)
 	if find.Error != nil {
 		return nil, find.Error
 	}
-	return Envs, nil
+	return envs, nil
 }
 
 func DeleteEnv(id int) error {
@@ -71,10 +73,11 @@ func DeleteEnv(id int) error {
 	return nil
 }
 
-func UpdateEnv(id int, name string, desc string) error {
+func UpdateEnv(id int, name string, desc string, weight int) error {
 	env := &Env{
 		Id:          id,
 		Name:        name,
+		Weight:      weight,
 		Description: desc,
 		UpdateTime:  time.Now().Unix(),
 	}

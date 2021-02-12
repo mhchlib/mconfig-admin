@@ -14,11 +14,11 @@ import (
 
 type GetServiceDetailRequest struct {
 	Cluster int    `form:"cluster"`
-	Service string `form:"service"`
+	Service string `form:"service"  binding:"required"`
 }
 
 func GetServiceDetail(c *gin.Context) {
-	param := &GetServiceDetailRequest{}
+	var param GetServiceDetailRequest
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)

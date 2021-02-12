@@ -9,6 +9,7 @@ import (
 
 type AddFilterRequest struct {
 	Filter string `form:"filter"`
+	Mode   int    `json:"mode"`
 }
 
 func AddFilter(c *gin.Context) {
@@ -18,7 +19,7 @@ func AddFilter(c *gin.Context) {
 		responseParamError(c)
 		return
 	}
-	id, err := model.InsertFilter(model.TYPE_FILTER_LUA, param.Filter)
+	id, err := model.InsertFilter(model.Mode_FILTER(param.Mode), param.Filter)
 	if err != nil {
 		log.Error(err)
 		responseDefaultFail(c, "创建失败")
@@ -31,6 +32,7 @@ func AddFilter(c *gin.Context) {
 type UpdateFilterRequest struct {
 	Id     int    `form:"id"`
 	Filter string `form:"filter"`
+	Mode   int    `json:"mode"`
 }
 
 func UpdateFilter(c *gin.Context) {
@@ -40,7 +42,7 @@ func UpdateFilter(c *gin.Context) {
 		responseParamError(c)
 		return
 	}
-	err = model.UpdateFilter(param.Id, model.TYPE_FILTER_LUA, param.Filter)
+	err = model.UpdateFilter(param.Id, model.Mode_FILTER(param.Mode), param.Filter)
 	if err != nil {
 		responseDefaultFail(c, "更新FILTER信息失败")
 		return
@@ -62,5 +64,15 @@ func GetFilter(c *gin.Context) {
 		return
 	}
 	responseDefaultSuccess(c, item)
+	return
+}
+
+func GetFilterMode(c *gin.Context) {
+	modes, err := model.GetFilterModes()
+	if err != nil {
+		responseDefaultFail(c, "获取filter mode信息失败")
+		return
+	}
+	responseDefaultSuccess(c, modes)
 	return
 }

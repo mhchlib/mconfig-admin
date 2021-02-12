@@ -9,20 +9,22 @@ import (
 )
 
 type AddAppRequest struct {
-	Name string `form:"name"`
+	Name string `form:"name"  binding:"required"`
 	Key  string `form:"key"`
 	Desc string `form:"desc"`
 }
 
+const PREFIX_APP_KEY = "app_"
+
 func AddApp(c *gin.Context) {
-	param := &AddAppRequest{}
+	var param AddAppRequest
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)
 		return
 	}
 	if param.Key == "" {
-		param.Key = "app_" + common.GenKey()
+		param.Key = PREFIX_APP_KEY + common.GenKey()
 	} else {
 		unique := model.CheckAppKeyUnique(param.Key)
 		if !unique {
@@ -56,7 +58,7 @@ type ListAppResponse struct {
 }
 
 func ListApp(c *gin.Context) {
-	param := &ListAppRequest{}
+	var param ListAppRequest
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)

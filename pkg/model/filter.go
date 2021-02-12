@@ -4,29 +4,40 @@ import (
 	"time"
 )
 
-type TYPE_FILTER int
+type Mode_FILTER int
 
 const (
-	TYPE_FILTER_LUA TYPE_FILTER = 1
+	Mode_FILTER_LUA Mode_FILTER = 1
 )
 
 type Filter struct {
-	Id         int         `gorm:"primary_key,column:id"`
-	Type       TYPE_FILTER `gorm:"column:type"`
-	Filter     string      `gorm:"column:filter"`
-	CreateUser int         `gorm:"column:create_user"`
-	UpdateUser int         `gorm:"column:update_user"`
-	CreateTime int64       `gorm:"column:create_time"`
-	UpdateTime int64       `gorm:"column:update_time"`
+	Id         int         `gorm:"primary_key,column:id" json:"id"`
+	Mode       Mode_FILTER `gorm:"column:mode" json:"mode"`
+	Filter     string      `gorm:"column:filter" json:"filter"`
+	CreateUser int         `gorm:"column:create_user" json:"create_user"`
+	UpdateUser int         `gorm:"column:update_user" json:"update_user"`
+	CreateTime int64       `gorm:"column:create_time" json:"create_time"`
+	UpdateTime int64       `gorm:"column:update_time" json:"update_time"`
+}
+
+type FilterModel struct {
+	Id       int    `gorm:"primary_key,column:id" json:"id"`
+	Name     string `gorm:"column:name" json:"name"`
+	Template string `gorm:"column:template" json:"template"`
+	Note     string `gorm:"column:note" json:"note"`
 }
 
 func (Filter) TableName() string {
 	return "m_filter"
 }
 
-func InsertFilter(filterType TYPE_FILTER, filter string) (int, error) {
+func (FilterModel) TableName() string {
+	return "m_filter_mode"
+}
+
+func InsertFilter(filterMode Mode_FILTER, filter string) (int, error) {
 	f := &Filter{
-		Type:       filterType,
+		Mode:       filterMode,
 		Filter:     filter,
 		CreateTime: time.Now().Unix(),
 		UpdateTime: time.Now().Unix(),
@@ -48,10 +59,10 @@ func DeleteFilter(id int) error {
 	return nil
 }
 
-func UpdateFilter(id int, filterType TYPE_FILTER, filter string) error {
+func UpdateFilter(id int, filterType Mode_FILTER, filter string) error {
 	f := &Filter{
 		Id:         id,
-		Type:       filterType,
+		Mode:       filterType,
 		Filter:     filter,
 		UpdateTime: time.Now().Unix(),
 	}
@@ -71,4 +82,13 @@ func GetFilter(id int) (*Filter, error) {
 		return nil, data.Error
 	}
 	return f, nil
+}
+
+func GetFilterModes() ([]*FilterModel, error) {
+	modes := make([]*FilterModel, 0)
+	find := db.Find(&modes)
+	if find.Error != nil {
+		return nil, find.Error
+	}
+	return modes, nil
 }

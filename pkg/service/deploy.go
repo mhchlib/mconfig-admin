@@ -14,20 +14,29 @@ import (
 )
 
 type DeployConfigRequest struct {
-	Cluster int `form:"cluster"`
-	Config  int `form:"config"`
+	Cluster int `form:"cluster" binding:"required"`
+	Tag     int `form:"tag" binding:"required"`
 }
 
 func DeployConfig(c *gin.Context) {
-	param := &DeployConfigRequest{}
+	var param DeployConfigRequest
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)
 		return
 	}
 	clusterId := param.Cluster
-	configId := param.Config
-	config, err := model.GetConfig(configId)
+	tagId := param.Tag
+	tag, err := model.GetTag(tagId)
+	if err != nil {
+		responseDefaultFail(c, err)
+		return
+	}
+	config, err := model.GetConfig(tag.ConfigId)
+	if err != nil {
+		responseDefaultFail(c, err)
+		return
+	}
 	if err != nil {
 		responseDefaultFail(c, err)
 		return
@@ -82,7 +91,7 @@ func DeployConfig(c *gin.Context) {
 		Env:    env.Key,
 		Config: config.Key,
 		Filter: filter,
-		Val:    config.Val,
+		Val:    tag.Config,
 	}
 	//开始部署
 	onceShare := false

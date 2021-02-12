@@ -75,3 +75,12 @@ func GetCluster(id int) (*Cluster, error) {
 	}
 	return f, nil
 }
+
+func CountCluster() (interface{}, error) {
+	var count int
+	c := db.Model(&Cluster{}).Count(&count)
+	if c.Error != nil {
+		return nil, c.Error
+	}
+	return count, nil
+}

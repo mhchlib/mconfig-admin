@@ -10,13 +10,13 @@ import (
 )
 
 type AddClusterRequest struct {
-	Namespace string `form:"namespace"`
-	Register  string `form:"register"`
+	Namespace string `form:"namespace"  binding:"required"`
+	Register  string `form:"register"  binding:"required"`
 	Desc      string `form:"desc"`
 }
 
 func AddCluster(c *gin.Context) {
-	param := &AddClusterRequest{}
+	var param AddClusterRequest
 	err := c.Bind(&param)
 	if err != nil {
 		responseParamError(c)

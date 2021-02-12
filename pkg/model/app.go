@@ -82,3 +82,12 @@ func GetApp(id int) (*App, error) {
 	}
 	return f, nil
 }
+
+func CountApp() (interface{}, error) {
+	var count int
+	c := db.Model(&App{}).Count(&count)
+	if c.Error != nil {
+		return nil, c.Error
+	}
+	return count, nil
+}
