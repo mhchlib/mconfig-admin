@@ -5,6 +5,7 @@ import (
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/common"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"strconv"
 )
 
@@ -20,11 +21,11 @@ func AddConfig(c *gin.Context) {
 	var param AddConfigRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.App == 0 {
-		responseDefaultFail(c, "app key 不能为空")
+		tools.ResponseDefaultFail(c, "app key 不能为空")
 		return
 	}
 	if param.Key == "" {
@@ -32,17 +33,17 @@ func AddConfig(c *gin.Context) {
 	} else {
 		unique := model.CheckConfigKeyUnique(param.App, param.Env, param.Key)
 		if !unique {
-			responseDefaultFail(c, "config key重复")
+			tools.ResponseDefaultFail(c, "config key重复")
 			return
 		}
 	}
 	err = model.InsertConfig(param.App, param.Env, param.Name, param.Desc, param.Key)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -69,15 +70,15 @@ func ListConfig(c *gin.Context) {
 	param := &ListConfigRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.App == 0 || param.App == -1 {
-		responseDefaultFail(c, "app id 无效")
+		tools.ResponseDefaultFail(c, "app id 无效")
 		return
 	}
 	if param.Env == 0 || param.Env == -1 {
-		responseDefaultFail(c, "env id 无效")
+		tools.ResponseDefaultFail(c, "env id 无效")
 		return
 	}
 	if param.Limit == 0 {
@@ -98,10 +99,10 @@ func ListConfig(c *gin.Context) {
 		})
 	}
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
-	responseDefaultSuccess(c, data)
+	tools.ResponseDefaultSuccess(c, data)
 	return
 }
 
@@ -110,15 +111,15 @@ func DeleteConfig(c *gin.Context) {
 	log.Info(id)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.DeleteConfig(atoi)
 	if err != nil {
-		responseDefaultFail(c, "删除失败")
+		tools.ResponseDefaultFail(c, "删除失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 }
 
 type UpdateConfigRequest struct {
@@ -131,21 +132,21 @@ func UpdateConfig(c *gin.Context) {
 	param := &UpdateConfigRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	log.Info("update", idStr, param.Name, param.Desc)
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateConfig(id, param.Name, param.Desc)
 	if err != nil {
-		responseDefaultFail(c, "更新失败")
+		tools.ResponseDefaultFail(c, "更新失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -157,21 +158,21 @@ func UpdateConfigVal(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	param := &UpdateConfigValRequest{}
 	err = c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateConfigVal(id, param.Val)
 	if err != nil {
-		responseDefaultFail(c, "更新信息失败")
+		tools.ResponseDefaultFail(c, "更新信息失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -183,21 +184,21 @@ func UpdateConfigSchema(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	param := &UpdateConfigValRequest{}
 	err = c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateConfigSchema(id, param.Val)
 	if err != nil {
-		responseDefaultFail(c, "更新信息失败")
+		tools.ResponseDefaultFail(c, "更新信息失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -210,20 +211,20 @@ func UpdateConfigValAndConfig(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	param := &UpdateConfigValAndConfigRequest{}
 	err = c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateConfigValAndConfig(id, param.Config, param.Schema)
 	if err != nil {
-		responseDefaultFail(c, "更新信息失败")
+		tools.ResponseDefaultFail(c, "更新信息失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }

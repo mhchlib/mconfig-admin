@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"strconv"
 )
 
@@ -16,16 +17,16 @@ func AddFilter(c *gin.Context) {
 	param := &AddFilterRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	id, err := model.InsertFilter(model.Mode_FILTER(param.Mode), param.Filter)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, "创建失败")
+		tools.ResponseDefaultFail(c, "创建失败")
 		return
 	}
-	responseDefaultSuccess(c, id)
+	tools.ResponseDefaultSuccess(c, id)
 	return
 }
 
@@ -39,15 +40,15 @@ func UpdateFilter(c *gin.Context) {
 	param := &UpdateFilterRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateFilter(param.Id, model.Mode_FILTER(param.Mode), param.Filter)
 	if err != nil {
-		responseDefaultFail(c, "更新FILTER信息失败")
+		tools.ResponseDefaultFail(c, "更新FILTER信息失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -55,24 +56,24 @@ func GetFilter(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	item, err := model.GetFilter(id)
 	if err != nil {
-		responseDefaultFail(c, "获取filter信息失败")
+		tools.ResponseDefaultFail(c, "获取filter信息失败")
 		return
 	}
-	responseDefaultSuccess(c, item)
+	tools.ResponseDefaultSuccess(c, item)
 	return
 }
 
 func GetFilterMode(c *gin.Context) {
 	modes, err := model.GetFilterModes()
 	if err != nil {
-		responseDefaultFail(c, "获取filter mode信息失败")
+		tools.ResponseDefaultFail(c, "获取filter mode信息失败")
 		return
 	}
-	responseDefaultSuccess(c, modes)
+	tools.ResponseDefaultSuccess(c, modes)
 	return
 }

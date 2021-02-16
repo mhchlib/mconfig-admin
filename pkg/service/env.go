@@ -5,6 +5,7 @@ import (
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/common"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"strconv"
 )
 
@@ -21,11 +22,11 @@ func AddEnv(c *gin.Context) {
 	var param AddEnvRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.App == 0 {
-		responseDefaultFail(c, "app key 不能为空")
+		tools.ResponseDefaultFail(c, "app key 不能为空")
 		return
 	}
 	if param.Key == "" {
@@ -33,17 +34,17 @@ func AddEnv(c *gin.Context) {
 	} else {
 		unique := model.CheckEnvKeyUnique(param.App, param.Key)
 		if !unique {
-			responseDefaultFail(c, "env key重复")
+			tools.ResponseDefaultFail(c, "env key重复")
 			return
 		}
 	}
 	err = model.InsertEnv(param.App, param.Name, param.Desc, param.Key, param.Filter, param.Weight)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -69,11 +70,11 @@ func ListEnv(c *gin.Context) {
 	param := &ListEnvRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.App == 0 || param.App == -1 {
-		responseDefaultFail(c, "app key 无效")
+		tools.ResponseDefaultFail(c, "app key 无效")
 		return
 	}
 	if param.Limit == 0 {
@@ -94,10 +95,10 @@ func ListEnv(c *gin.Context) {
 		})
 	}
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
-	responseDefaultSuccess(c, data)
+	tools.ResponseDefaultSuccess(c, data)
 	return
 }
 
@@ -106,15 +107,15 @@ func DeleteEnv(c *gin.Context) {
 	log.Info(id)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.DeleteEnv(atoi)
 	if err != nil {
-		responseDefaultFail(c, "删除失败")
+		tools.ResponseDefaultFail(c, "删除失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 }
 
 type UpdateEnvRequest struct {
@@ -128,21 +129,21 @@ func UpdateEnv(c *gin.Context) {
 	param := &UpdateEnvRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	log.Info("update", idStr, param.Name, param.Desc, param.Weight)
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateEnv(id, param.Name, param.Desc, param.Weight)
 	if err != nil {
-		responseDefaultFail(c, "更新失败")
+		tools.ResponseDefaultFail(c, "更新失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -154,20 +155,20 @@ func UpdateEnvFilter(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	param := &UpdateEnvFilterRequest{}
 	err = c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateEnvFilter(id, param.Filter)
 	if err != nil {
-		responseDefaultFail(c, "更新环境信息失败")
+		tools.ResponseDefaultFail(c, "更新环境信息失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }

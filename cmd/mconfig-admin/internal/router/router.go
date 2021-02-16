@@ -6,8 +6,9 @@ import (
 )
 
 func AddRouters(engine *gin.Engine) {
-	group := engine.Group("/api")
-	addV1Routers(group)
+	api := engine.Group("/api")
+	api.GET("/dashboard", service.Dashboard)
+	addV1Routers(api)
 }
 
 func addV1Routers(group *gin.RouterGroup) {
@@ -15,6 +16,10 @@ func addV1Routers(group *gin.RouterGroup) {
 	//dashboard
 	dashboard := v1.Group("/dashboard")
 	dashboard.GET("/", service.Dashboard)
+
+	//user
+	user := v1.Group("/user")
+	user.POST("login", service.Login)
 
 	//app
 	app := v1.Group("/app")

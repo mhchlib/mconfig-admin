@@ -5,6 +5,7 @@ import (
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/common"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"strconv"
 )
 
@@ -20,7 +21,7 @@ func AddApp(c *gin.Context) {
 	var param AddAppRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.Key == "" {
@@ -28,17 +29,17 @@ func AddApp(c *gin.Context) {
 	} else {
 		unique := model.CheckAppKeyUnique(param.Key)
 		if !unique {
-			responseDefaultFail(c, "app key重复")
+			tools.ResponseDefaultFail(c, "app key重复")
 			return
 		}
 	}
 	err = model.InsertApp(param.Name, param.Desc, param.Key)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -61,7 +62,7 @@ func ListApp(c *gin.Context) {
 	var param ListAppRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.Limit == 0 {
@@ -80,10 +81,10 @@ func ListApp(c *gin.Context) {
 		})
 	}
 	if err != nil {
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, data)
+	tools.ResponseDefaultSuccess(c, data)
 	return
 }
 
@@ -92,15 +93,15 @@ func DeleteAPP(c *gin.Context) {
 	log.Info(id)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.DeleteApp(atoi)
 	if err != nil {
-		responseDefaultFail(c, "删除失败")
+		tools.ResponseDefaultFail(c, "删除失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 }
 
 type UpdateAppRequest struct {
@@ -113,20 +114,20 @@ func UpdateApp(c *gin.Context) {
 	param := &UpdateAppRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	log.Info("update", id, param.Name, param.Desc)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateApp(atoi, param.Name, param.Desc)
 	if err != nil {
-		responseDefaultFail(c, "更新失败")
+		tools.ResponseDefaultFail(c, "更新失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/mhchlib/logger"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"github.com/mhchlib/mconfig-api/api/v1/server"
 	"github.com/mhchlib/mconfig/pkg/mconfig"
 	"google.golang.org/grpc"
@@ -21,14 +22,14 @@ func GetServiceDetail(c *gin.Context) {
 	var param GetServiceDetailRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
 	dial, err := grpc.DialContext(withTimeout, param.Service, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Info(err, " addr: ", param.Service)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
 	mconfigService := server.NewMConfigClient(dial)
@@ -36,17 +37,17 @@ func GetServiceDetail(c *gin.Context) {
 	data, err := mconfigService.GetNodeDetail(withTimeout, &empty.Empty{})
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	v := &mconfig.NodeDetail{}
 	err = json.Unmarshal(data.Data, v)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
-	responseDefaultSuccess(c, v)
+	tools.ResponseDefaultSuccess(c, v)
 	return
 }
 
@@ -64,14 +65,14 @@ func UpdateServiceDetail(c *gin.Context) {
 	param := &UpdateServiceDetailRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
 	dial, err := grpc.DialContext(withTimeout, param.Service, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Info(err, " addr: ", param.Service)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
 	mconfigService := server.NewMConfigClient(dial)
@@ -85,10 +86,10 @@ func UpdateServiceDetail(c *gin.Context) {
 	})
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 }
 
 type DeleteServiceItemRequest struct {
@@ -104,14 +105,14 @@ func DeleteServiceItem(c *gin.Context) {
 	param := &UpdateServiceDetailRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
 	dial, err := grpc.DialContext(withTimeout, param.Service, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		log.Info(err, " addr: ", param.Service)
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	mconfigService := server.NewMConfigClient(dial)
@@ -125,7 +126,7 @@ func DeleteServiceItem(c *gin.Context) {
 		})
 		if err != nil {
 			log.Error(err)
-			responseDefaultFail(c, err)
+			tools.ResponseDefaultFail(c, err)
 			return
 		}
 	}
@@ -136,10 +137,10 @@ func DeleteServiceItem(c *gin.Context) {
 		})
 		if err != nil {
 			log.Error(err)
-			responseDefaultFail(c, err)
+			tools.ResponseDefaultFail(c, err)
 			return
 		}
 	}
 
-	responseDefaultFail(c, "type 错误")
+	tools.ResponseDefaultFail(c, "type 错误")
 }

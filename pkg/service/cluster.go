@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"github.com/mhchlib/register"
 	"github.com/mhchlib/register/reg"
 	"strconv"
@@ -19,16 +20,16 @@ func AddCluster(c *gin.Context) {
 	var param AddClusterRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.InsertCluster(param.Namespace, param.Register, param.Desc)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -51,7 +52,7 @@ func ListCluster(c *gin.Context) {
 	param := &ListClusterRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.Limit == 0 {
@@ -70,10 +71,10 @@ func ListCluster(c *gin.Context) {
 		})
 	}
 	if err != nil {
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, data)
+	tools.ResponseDefaultSuccess(c, data)
 	return
 }
 
@@ -82,15 +83,15 @@ func DeleteCluster(c *gin.Context) {
 	log.Info(id)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.DeleteCluster(atoi)
 	if err != nil {
-		responseDefaultFail(c, "删除失败")
+		tools.ResponseDefaultFail(c, "删除失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 }
 
 type UpdateClusterRequest struct {
@@ -104,21 +105,21 @@ func UpdateCluster(c *gin.Context) {
 	param := &UpdateClusterRequest{}
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	log.Info("update", id, param.Namespace, param.Register, param.Desc)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.UpdateCluster(atoi, param.Namespace, param.Register, param.Desc)
 	if err != nil {
-		responseDefaultFail(c, "更新失败")
+		tools.ResponseDefaultFail(c, "更新失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -131,16 +132,16 @@ func GetCluster(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
-	response := &GetClusterRepsonse{}
+	Response := &GetClusterRepsonse{}
 	cluster, err := model.GetCluster(id)
 	if err != nil {
-		responseDefaultFail(c, "获取失败")
+		tools.ResponseDefaultFail(c, "获取失败")
 		return
 	}
-	response.Cluster = cluster
+	Response.Cluster = cluster
 
 	//获取services
 	regClient, err := register.InitRegister(func(options *reg.Options) {
@@ -148,11 +149,11 @@ func GetCluster(c *gin.Context) {
 		options.NameSpace = cluster.Namespace
 	})
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	services, err := regClient.ListAllServices("mconfig-server")
-	response.Services = services
-	responseDefaultSuccess(c, response)
+	Response.Services = services
+	tools.ResponseDefaultSuccess(c, Response)
 	return
 }

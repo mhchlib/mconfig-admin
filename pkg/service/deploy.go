@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"github.com/mhchlib/mconfig-api/api/v1/server"
 	"github.com/mhchlib/mconfig/pkg/store"
 	"github.com/mhchlib/register"
@@ -22,28 +23,28 @@ func DeployConfig(c *gin.Context) {
 	var param DeployConfigRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	clusterId := param.Cluster
 	tagId := param.Tag
 	tag, err := model.GetTag(tagId)
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	config, err := model.GetConfig(tag.ConfigId)
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	cluster, err := model.GetCluster(clusterId)
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	//获取services
@@ -52,33 +53,33 @@ func DeployConfig(c *gin.Context) {
 		options.NameSpace = cluster.Namespace
 	})
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	services, err := regClient.ListAllServices("mconfig-server")
 	if services != nil && len(services) == 0 {
-		responseDefaultFail(c, "该集群没有线上服务")
+		tools.ResponseDefaultFail(c, "该集群没有线上服务")
 		return
 	}
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	app, err := model.GetApp(config.App)
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	env, err := model.GetEnv(config.Env)
 	if err != nil {
-		responseDefaultFail(c, err)
+		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	var filter string
 	if env.Filter != -1 {
 		f, err := model.GetFilter(env.Filter)
 		if err != nil {
-			responseDefaultFail(c, err)
+			tools.ResponseDefaultFail(c, err)
 			return
 		}
 		filter = f.Filter
@@ -112,7 +113,7 @@ func DeployConfig(c *gin.Context) {
 			_, err = mconfigService.UpdateConfig(withTimeout, configData)
 			if err != nil {
 				log.Error(err)
-				responseDefaultFail(c, err)
+				tools.ResponseDefaultFail(c, err)
 				return
 			}
 			onceShare = true
@@ -131,11 +132,11 @@ func DeployConfig(c *gin.Context) {
 			_, err = mconfigService.UpdateConfig(withTimeout, configData)
 			if err != nil {
 				log.Error(err)
-				responseDefaultFail(c, err)
+				tools.ResponseDefaultFail(c, err)
 				return
 			}
 		}
-		responseDefaultSuccess(c, nil)
+		tools.ResponseDefaultSuccess(c, nil)
 		return
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"strconv"
 )
 
@@ -17,22 +18,22 @@ func BuildTag(c *gin.Context) {
 	var param BuildTagRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	config, err := model.GetConfig(param.Config)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
 	err = model.InsertTag(param.Tag, param.Desc, param.Config, config.Val, config.Schema)
 	if err != nil {
 		log.Error(err)
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
 
@@ -55,7 +56,7 @@ func ListTag(c *gin.Context) {
 	var param ListTagRequest
 	err := c.Bind(&param)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	if param.Limit == 0 {
@@ -73,10 +74,10 @@ func ListTag(c *gin.Context) {
 		})
 	}
 	if err != nil {
-		responseDefaultFail(c, nil)
+		tools.ResponseDefaultFail(c, nil)
 		return
 	}
-	responseDefaultSuccess(c, data)
+	tools.ResponseDefaultSuccess(c, data)
 	return
 }
 
@@ -85,29 +86,29 @@ func DeleteTag(c *gin.Context) {
 	log.Info(id)
 	atoi, err := strconv.Atoi(id)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	err = model.DeleteTag(atoi)
 	if err != nil {
-		responseDefaultFail(c, "删除失败")
+		tools.ResponseDefaultFail(c, "删除失败")
 		return
 	}
-	responseDefaultSuccess(c, nil)
+	tools.ResponseDefaultSuccess(c, nil)
 }
 
 func GetTag(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		responseParamError(c)
+		tools.ResponseParamError(c)
 		return
 	}
 	item, err := model.GetTag(id)
 	if err != nil {
-		responseDefaultFail(c, "获取tag信息失败")
+		tools.ResponseDefaultFail(c, "获取tag信息失败")
 		return
 	}
-	responseDefaultSuccess(c, item)
+	tools.ResponseDefaultSuccess(c, item)
 	return
 }
