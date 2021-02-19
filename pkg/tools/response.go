@@ -68,6 +68,11 @@ func ResponseParamError(c *gin.Context) {
 }
 
 func ResponseDefaultFail(c *gin.Context, msg interface{}) {
+	switch msg.(type) {
+	case error:
+		msg = msg.(error).Error()
+	default:
+	}
 	if msg != nil {
 		Response(c, CODE_FAIL_REQUEST, msg, nil)
 		return

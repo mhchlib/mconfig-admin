@@ -26,6 +26,14 @@ func Dashboard(c *gin.Context) {
 		return
 	}
 	data["cluster"] = cluster
+
+	user, err := model.CountUser()
+	if err != nil {
+		tools.ResponseDefaultFail(c, nil)
+		return
+	}
+	data["user"] = user
+
 	tools.ResponseDefaultSuccess(c, data)
 	return
 }

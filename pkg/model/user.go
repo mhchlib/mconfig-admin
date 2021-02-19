@@ -47,3 +47,12 @@ func GetUserByName(name string) (*User, error) {
 	}
 	return f, nil
 }
+
+func CountUser() (interface{}, error) {
+	var count int
+	c := db.Model(&User{}).Count(&count)
+	if c.Error != nil {
+		return nil, c.Error
+	}
+	return count, nil
+}

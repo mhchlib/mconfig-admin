@@ -92,3 +92,14 @@ func GetFilterModes() ([]*FilterModel, error) {
 	}
 	return modes, nil
 }
+
+func GetFilterMode(id int) (string, error) {
+	mode := &FilterModel{
+		Id: id,
+	}
+	find := db.Find(&mode)
+	if find.Error != nil {
+		return "", find.Error
+	}
+	return mode.Name, nil
+}

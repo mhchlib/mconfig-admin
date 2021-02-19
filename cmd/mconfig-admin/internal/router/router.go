@@ -64,6 +64,7 @@ func addV1Routers(group *gin.RouterGroup) {
 	//deploy
 	deploy := v1.Group("/deploy")
 	deploy.POST("/config", service.DeployConfig)
+	deploy.POST("/filter", service.DeployFilter)
 
 	//service
 	ser := v1.Group("/service")
