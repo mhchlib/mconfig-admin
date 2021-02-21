@@ -8,7 +8,8 @@ import (
 	"github.com/mhchlib/mconfig-admin/pkg/model"
 	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"github.com/mhchlib/mconfig-api/api/v1/server"
-	"github.com/mhchlib/mconfig/pkg/store"
+	"github.com/mhchlib/mconfig/core/mconfig"
+	"github.com/mhchlib/mconfig/core/store"
 	"github.com/mhchlib/register"
 	"github.com/mhchlib/register/reg"
 	"google.golang.org/grpc"
@@ -73,7 +74,7 @@ func DeployConfig(c *gin.Context) {
 		return
 	}
 	var filter string
-	var filterObj map[string]interface{}
+	var filterObj *mconfig.StoreVal
 	if env.Filter != -1 {
 		f, err := model.GetFilter(env.Filter)
 		if err != nil {
@@ -85,16 +86,26 @@ func DeployConfig(c *gin.Context) {
 			tools.ResponseDefaultFail(c, err)
 			return
 		}
-		filterObj = map[string]interface{}{
-			"weight": env.Weight,
-			"code":   f.Filter,
-			"mode":   mode,
+		filterObj, err = mconfig.BuildFilterStoreVal(&mconfig.FilterStoreVal{
+			Env:    mconfig.ConfigEnv(env.Key),
+			Weight: env.Weight,
+			Code:   mconfig.FilterVal(f.Filter),
+			Mode:   mconfig.FilterMode(mode),
+		})
+		if err != nil {
+			tools.ResponseDefaultFail(c, err)
+			return
 		}
 	} else {
-		filterObj = map[string]interface{}{
-			"weight": env.Weight,
-			"code":   "",
-			"mode":   "lua",
+		filterObj, err = mconfig.BuildFilterStoreVal(&mconfig.FilterStoreVal{
+			Env:    mconfig.ConfigEnv(env.Key),
+			Weight: env.Weight,
+			Code:   mconfig.FilterVal(""),
+			Mode:   mconfig.FilterMode_lua,
+		})
+		if err != nil {
+			tools.ResponseDefaultFail(c, err)
+			return
 		}
 	}
 	filterBytes, err := json.Marshal(filterObj)
@@ -104,12 +115,25 @@ func DeployConfig(c *gin.Context) {
 	}
 	filter = string(filterBytes)
 
+	configObj, err := mconfig.BuildConfigStoreVal(&mconfig.ConfigStoreVal{
+		Key: mconfig.ConfigKey(config.Key),
+		Val: mconfig.ConfigVal(tag.Config),
+	})
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	configBytes, err := json.Marshal(configObj)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
 	configData := &server.UpdateConfigRequest{
 		App:    app.Key,
 		Env:    env.Key,
 		Config: config.Key,
 		Filter: filter,
-		Val:    tag.Config,
+		Val:    string(configBytes),
 	}
 	//开始部署
 	onceShare := false
@@ -212,10 +236,15 @@ func DeployFilter(c *gin.Context) {
 			tools.ResponseDefaultFail(c, err)
 			return
 		}
-		filterObj := map[string]interface{}{
-			"weight": env.Weight,
-			"code":   f.Filter,
-			"mode":   mode,
+		filterObj, err := mconfig.BuildFilterStoreVal(&mconfig.FilterStoreVal{
+			Env:    mconfig.ConfigEnv(env.Key),
+			Weight: env.Weight,
+			Code:   mconfig.FilterVal(f.Filter),
+			Mode:   mconfig.FilterMode(mode),
+		})
+		if err != nil {
+			tools.ResponseDefaultFail(c, err)
+			return
 		}
 		filterBytes, err := json.Marshal(filterObj)
 		if err != nil {

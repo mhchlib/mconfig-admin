@@ -8,7 +8,7 @@ import (
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"github.com/mhchlib/mconfig-api/api/v1/server"
-	"github.com/mhchlib/mconfig/pkg/mconfig"
+	"github.com/mhchlib/mconfig/core/mconfig"
 	"google.golang.org/grpc"
 	"time"
 )
