@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mhchlib/mconfig-admin/pkg/service"
+	"github.com/mhchlib/mconfig-admin/service"
 )
 
 func AddRouters(engine *gin.Engine) {

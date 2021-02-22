@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
-	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/model"
 	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"github.com/mhchlib/mconfig-api/api/v1/server"
 	"github.com/mhchlib/mconfig/core/mconfig"

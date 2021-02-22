@@ -2,7 +2,7 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/mhchlib/mconfig-admin/pkg/model"
+	"github.com/mhchlib/mconfig-admin/model"
 	"github.com/mhchlib/mconfig-admin/pkg/tools"
 )
 

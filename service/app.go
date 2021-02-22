@@ -3,8 +3,8 @@ package service
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/mhchlib/logger"
+	"github.com/mhchlib/mconfig-admin/model"
 	"github.com/mhchlib/mconfig-admin/pkg/common"
-	"github.com/mhchlib/mconfig-admin/pkg/model"
 	"github.com/mhchlib/mconfig-admin/pkg/tools"
 	"strconv"
 )

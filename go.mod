@@ -8,7 +8,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
-	github.com/go-kit/kit v0.10.0
+	github.com/go-kit/kit v0.10.1
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang/protobuf v1.4.0
 	github.com/jinzhu/gorm v1.9.16
@@ -29,3 +29,5 @@ replace github.com/mhchlib/mconfig => ../mconfig
 replace github.com/mhchlib/logger v0.0.0-20201023050446-420de20374cc => ../logger
 
 replace github.com/mhchlib/mconfig-api v0.0.0-20201023050446-420de20374cc => ../mconfig-api
+
+replace github.com/go-kit/kit v0.10.1 => ../kit
