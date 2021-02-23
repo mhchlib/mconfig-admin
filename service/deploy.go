@@ -11,7 +11,6 @@ import (
 	"github.com/mhchlib/mconfig/core/mconfig"
 	"github.com/mhchlib/mconfig/core/store"
 	"github.com/mhchlib/register"
-	"github.com/mhchlib/register/reg"
 	"google.golang.org/grpc"
 	"time"
 )
@@ -46,10 +45,10 @@ func DeployUpdateConfig(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(func(options *reg.Options) {
-		options.RegisterStr = cluster.Register
-		options.NameSpace = cluster.Namespace
-	})
+	regClient, err := register.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.RegisterStr(cluster.Register),
+	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
 		return
@@ -208,10 +207,10 @@ func DeployUpdateFilter(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(func(options *reg.Options) {
-		options.RegisterStr = cluster.Register
-		options.NameSpace = cluster.Namespace
-	})
+	regClient, err := register.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.RegisterStr(cluster.Register),
+	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
 		return
@@ -314,7 +313,6 @@ func DeployUpdateFilter(c *gin.Context) {
 	return
 }
 
-
 type DeployDeleteFilterRequest struct {
 	Cluster int `form:"cluster" binding:"required"`
 	Env     int `form:"env" binding:"required"`
@@ -340,10 +338,10 @@ func DeployDeleteFilter(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(func(options *reg.Options) {
-		options.RegisterStr = cluster.Register
-		options.NameSpace = cluster.Namespace
-	})
+	regClient, err := register.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.RegisterStr(cluster.Register),
+	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
 		return
@@ -363,8 +361,8 @@ func DeployDeleteFilter(c *gin.Context) {
 		return
 	}
 	filterRequest := &server.DeletFilterRequest{
-		App:    app.Key,
-		Env:    env.Key,
+		App: app.Key,
+		Env: env.Key,
 	}
 	//开始部署
 	onceShare := false
@@ -433,10 +431,10 @@ func DeployDeleteConfig(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(func(options *reg.Options) {
-		options.RegisterStr = cluster.Register
-		options.NameSpace = cluster.Namespace
-	})
+	regClient, err := register.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.RegisterStr(cluster.Register),
+	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
 		return
@@ -517,4 +515,3 @@ func DeployDeleteConfig(c *gin.Context) {
 	tools.ResponseDefaultSuccess(c, nil)
 	return
 }
-
