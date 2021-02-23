@@ -12,6 +12,8 @@ type Env struct {
 	Weight      int    `gorm:"column:weight"`
 	Description string `gorm:"column:description"`
 	Filter      int    `gorm:"column:filter"`
+	DeployUser  int    `gorm:"column:deploy_user"`
+	DeployTime  int64  `gorm:"column:deploy_time"`
 	CreateUser  int    `gorm:"column:create_user"`
 	UpdateUser  int    `gorm:"column:update_user"`
 	CreateTime  int64  `gorm:"column:create_time"`
@@ -55,7 +57,7 @@ func CheckEnvKeyUnique(app int, key string) bool {
 
 func ListEnvs(app int, filter string, limit int, offset int) ([]*Env, error) {
 	envs := make([]*Env, 0)
-	fields := []string{"id", "env_name", "description", "env_key", "weight", "filter", "create_time", "update_time"}
+	fields := []string{"id", "env_name", "description", "env_key", "weight", "filter","deploy_time", "create_time", "update_time"}
 	find := db.Select(fields).Where("app_id = ? and (env_name LIKE ? or description LIKE ?)", app, "%"+filter+"%", "%"+filter+"%").Order("update_time desc").Limit(limit).Offset(offset).Find(&envs)
 	if find.Error != nil {
 		return nil, find.Error
@@ -110,4 +112,16 @@ func GetEnv(id int) (*Env, error) {
 		return nil, data.Error
 	}
 	return f, nil
+}
+
+func UpdateEnvDeployData(id int) error {
+	env := &Env{
+		Id:          id,
+		DeployTime:  time.Now().Unix(),
+	}
+	update := db.Model(env).Update(env)
+	if update.Error != nil {
+		return update.Error
+	}
+	return nil
 }

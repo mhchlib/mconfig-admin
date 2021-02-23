@@ -16,13 +16,13 @@ import (
 	"time"
 )
 
-type DeployConfigRequest struct {
+type DeployUpdateConfigRequest struct {
 	Cluster int `form:"cluster" binding:"required"`
 	Tag     int `form:"tag" binding:"required"`
 }
 
-func DeployConfig(c *gin.Context) {
-	var param DeployConfigRequest
+func DeployUpdateConfig(c *gin.Context) {
+	var param DeployUpdateConfigRequest
 	err := c.Bind(&param)
 	if err != nil {
 		tools.ResponseParamError(c)
@@ -177,18 +177,19 @@ func DeployConfig(c *gin.Context) {
 				return
 			}
 		}
-		tools.ResponseDefaultSuccess(c, nil)
-		return
 	}
+	_ = model.UpdateConfigDeployData(config.Id, tagId)
+	tools.ResponseDefaultSuccess(c, nil)
+	return
 }
 
-type DeployFilterRequest struct {
+type DeployUpdateFilterRequest struct {
 	Cluster int `form:"cluster" binding:"required"`
 	Env     int `form:"env" binding:"required"`
 }
 
-func DeployFilter(c *gin.Context) {
-	var param DeployFilterRequest
+func DeployUpdateFilter(c *gin.Context) {
+	var param DeployUpdateFilterRequest
 	err := c.Bind(&param)
 	if err != nil {
 		tools.ResponseParamError(c)
@@ -307,7 +308,213 @@ func DeployFilter(c *gin.Context) {
 				return
 			}
 		}
-		tools.ResponseDefaultSuccess(c, nil)
+	}
+	_ = model.UpdateEnvDeployData(env.Id)
+	tools.ResponseDefaultSuccess(c, nil)
+	return
+}
+
+
+type DeployDeleteFilterRequest struct {
+	Cluster int `form:"cluster" binding:"required"`
+	Env     int `form:"env" binding:"required"`
+}
+
+func DeployDeleteFilter(c *gin.Context) {
+	var param DeployDeleteFilterRequest
+	err := c.Bind(&param)
+	if err != nil {
+		tools.ResponseParamError(c)
 		return
 	}
+	clusterId := param.Cluster
+	envId := param.Env
+	env, err := model.GetEnv(envId)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	cluster, err := model.GetCluster(clusterId)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	//获取services
+	regClient, err := register.InitRegister(func(options *reg.Options) {
+		options.RegisterStr = cluster.Register
+		options.NameSpace = cluster.Namespace
+	})
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	services, err := regClient.ListAllServices("mconfig-server")
+	if services != nil && len(services) == 0 {
+		tools.ResponseDefaultFail(c, "该集群没有线上服务")
+		return
+	}
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	app, err := model.GetApp(env.App)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	filterRequest := &server.DeletFilterRequest{
+		App:    app.Key,
+		Env:    env.Key,
+	}
+	//开始部署
+	onceShare := false
+	for _, service := range services {
+		rpcAddress := service.Address
+		metadata := service.Metadata
+		mode := store.StoreMode(metadata["mode"].(string))
+		//一次就好
+		if (onceShare == false) && store.MODE_SHARE == mode {
+			withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
+			dial, err := grpc.DialContext(withTimeout, rpcAddress, grpc.WithInsecure(), grpc.WithBlock())
+			if err != nil {
+				log.Info(err, " addr: ", service)
+				continue
+			}
+			mconfigService := server.NewMConfigClient(dial)
+			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
+			_, err = mconfigService.DeletFilter(withTimeout, filterRequest)
+			if err != nil {
+				log.Error(err)
+				tools.ResponseDefaultFail(c, err)
+				return
+			}
+			onceShare = true
+		}
+
+		//每次都要
+		if store.MODE_LOCAL == mode {
+			withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
+			dial, err := grpc.DialContext(withTimeout, rpcAddress, grpc.WithInsecure(), grpc.WithBlock())
+			if err != nil {
+				log.Info(err, " addr: ", service)
+				continue
+			}
+			mconfigService := server.NewMConfigClient(dial)
+			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
+			_, err = mconfigService.DeletFilter(withTimeout, filterRequest)
+			if err != nil {
+				log.Error(err)
+				tools.ResponseDefaultFail(c, err)
+				return
+			}
+		}
+	}
+	tools.ResponseDefaultSuccess(c, nil)
+	return
 }
+
+type DeployDeleteConfigRequest struct {
+	Cluster int `form:"cluster" binding:"required"`
+	Config  int `form:"config" binding:"required"`
+}
+
+func DeployDeleteConfig(c *gin.Context) {
+	var param DeployDeleteConfigRequest
+	err := c.Bind(&param)
+	if err != nil {
+		tools.ResponseParamError(c)
+		return
+	}
+	clusterId := param.Cluster
+
+	cluster, err := model.GetCluster(clusterId)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	//获取services
+	regClient, err := register.InitRegister(func(options *reg.Options) {
+		options.RegisterStr = cluster.Register
+		options.NameSpace = cluster.Namespace
+	})
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	services, err := regClient.ListAllServices("mconfig-server")
+	if services != nil && len(services) == 0 {
+		tools.ResponseDefaultFail(c, "该集群没有线上服务")
+		return
+	}
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	config, err := model.GetConfig(param.Config)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	app, err := model.GetApp(config.App)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	envId := config.Env
+	env, err := model.GetEnv(envId)
+	if err != nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	configRequest := &server.DeletConfigRequest{
+		App:    app.Key,
+		Env:    env.Key,
+		Config: config.Key,
+	}
+	//开始部署
+	onceShare := false
+	for _, service := range services {
+		rpcAddress := service.Address
+		metadata := service.Metadata
+		mode := store.StoreMode(metadata["mode"].(string))
+		//一次就好
+		if (onceShare == false) && store.MODE_SHARE == mode {
+			withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
+			dial, err := grpc.DialContext(withTimeout, rpcAddress, grpc.WithInsecure(), grpc.WithBlock())
+			if err != nil {
+				log.Info(err, " addr: ", service)
+				continue
+			}
+			mconfigService := server.NewMConfigClient(dial)
+			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
+			_, err = mconfigService.DeletConfig(withTimeout, configRequest)
+			if err != nil {
+				log.Error(err)
+				tools.ResponseDefaultFail(c, err)
+				return
+			}
+			onceShare = true
+		}
+
+		//每次都要
+		if store.MODE_LOCAL == mode {
+			withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
+			dial, err := grpc.DialContext(withTimeout, rpcAddress, grpc.WithInsecure(), grpc.WithBlock())
+			if err != nil {
+				log.Info(err, " addr: ", service)
+				continue
+			}
+			mconfigService := server.NewMConfigClient(dial)
+			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
+			_, err = mconfigService.DeletConfig(withTimeout, configRequest)
+			if err != nil {
+				log.Error(err)
+				tools.ResponseDefaultFail(c, err)
+				return
+			}
+		}
+	}
+	tools.ResponseDefaultSuccess(c, nil)
+	return
+}
+

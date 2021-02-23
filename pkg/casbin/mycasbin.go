@@ -1,7 +1,7 @@
 package mycasbin
 
 import (
-	"github.com/go-kit/kit/endpoint"
+	"github.com/mhchlib/go-kit/endpoint"
 	_ "github.com/go-sql-driver/mysql"
 )
 

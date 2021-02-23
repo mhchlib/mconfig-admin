@@ -68,6 +68,26 @@ func UpdateServiceDetail(c *gin.Context) {
 		tools.ResponseParamError(c)
 		return
 	}
+	//check param.ConfigVal
+	configStoreVal := &mconfig.StoreVal{}
+	err = json.Unmarshal([]byte(param.ConfigVal), configStoreVal)
+	if err!=nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	configStoreVal.Md5 = mconfig.GetInterfaceMd5(configStoreVal.Data)
+	bs,_ := json.Marshal(configStoreVal)
+	param.ConfigVal = string(bs)
+	configStoreVal = &mconfig.StoreVal{}
+	err = json.Unmarshal([]byte(param.Filter), configStoreVal)
+	if err!=nil {
+		tools.ResponseDefaultFail(c, err)
+		return
+	}
+	configStoreVal.Md5 = mconfig.GetInterfaceMd5(configStoreVal.Data)
+	bs,_ = json.Marshal(configStoreVal)
+	param.Filter = string(bs)
+
 	withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
 	dial, err := grpc.DialContext(withTimeout, param.Service, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {

@@ -62,6 +62,8 @@ type ListConfigResponse struct {
 	Key        string `json:"key"`
 	Config     string `json:"config"`
 	Schema     string `json:"schema"`
+	DeployTime int64  `json:"deploy_time"`
+	DeployTag  string    `json:"deploy_tag"`
 	CreateTime int64  `json:"create_time"`
 	UpdateTime int64  `json:"update_time"`
 }
@@ -84,18 +86,25 @@ func ListConfig(c *gin.Context) {
 	if param.Limit == 0 {
 		param.Limit = DEFAULT_LIST_LIMIT
 	}
-	Configs, err := model.ListConfigs(param.App, param.Env, param.Filter, param.Limit, param.Offset)
+	configs, err := model.ListConfigs(param.App, param.Env, param.Filter, param.Limit, param.Offset)
 	data := make([]*ListConfigResponse, 0)
-	for _, Config := range Configs {
+	for _, config := range configs {
+		deployTag := "-"
+		tag, err := model.GetTag(config.DeployTag)
+		if err==nil {
+			deployTag = tag.Tag
+		}
 		data = append(data, &ListConfigResponse{
-			Id:         Config.Id,
-			Name:       Config.Name,
-			Desc:       Config.Description,
-			Key:        Config.Key,
-			Config:     Config.Val,
-			Schema:     Config.Schema,
-			CreateTime: Config.CreateTime,
-			UpdateTime: Config.UpdateTime,
+			Id:         config.Id,
+			Name:       config.Name,
+			Desc:       config.Description,
+			Key:        config.Key,
+			Config:     config.Val,
+			Schema:     config.Schema,
+			DeployTag:  deployTag,
+			DeployTime: config.DeployTime,
+			CreateTime: config.CreateTime,
+			UpdateTime: config.UpdateTime,
 		})
 	}
 	if err != nil {

@@ -13,6 +13,9 @@ type Config struct {
 	Val         string `gorm:"column:config_value"`
 	Schema      string `gorm:"column:config_schema"`
 	Description string `gorm:"column:description"`
+	DeployUser  int    `gorm:"column:deploy_user"`
+	DeployTime  int64  `gorm:"column:deploy_time"`
+	DeployTag   int    `gorm:"column:deploy_tag"`
 	CreateUser  int    `gorm:"column:create_user"`
 	UpdateUser  int    `gorm:"column:update_user"`
 	CreateTime  int64  `gorm:"column:create_time"`
@@ -46,7 +49,7 @@ func CheckConfigKeyUnique(app int, env int, key string) bool {
 
 func ListConfigs(app int, env int, filter string, limit int, offset int) ([]*Config, error) {
 	configs := make([]*Config, 0)
-	fields := []string{"id", "config_name", "description", "config_key", "config_value", "config_schema", "create_time", "update_time"}
+	fields := []string{"id", "config_name", "description", "config_key", "config_value", "config_schema","deploy_time","deploy_tag", "create_time", "update_time"}
 	find := db.Select(fields).Where("app_id = ? and env_id = ?  and (config_name LIKE ? or description LIKE ?)", app, env, "%"+filter+"%", "%"+filter+"%").Order("update_time desc").Limit(limit).Offset(offset).Find(&configs)
 	if find.Error != nil {
 		return nil, find.Error
@@ -136,4 +139,17 @@ func CountConfig() (interface{}, error) {
 		return nil, c.Error
 	}
 	return count, nil
+}
+
+func UpdateConfigDeployData(id int,tag int) error {
+	env := &Config{
+		Id:          id,
+		DeployTime:  time.Now().Unix(),
+		DeployTag:  tag,
+	}
+	update := db.Model(env).Update(env)
+	if update.Error != nil {
+		return update.Error
+	}
+	return nil
 }

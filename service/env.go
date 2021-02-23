@@ -62,6 +62,7 @@ type ListEnvResponse struct {
 	Key        string `json:"key"`
 	Weight     int    `json:"weight"`
 	Filter     int    `json:"filter"`
+	DeployTime int64  `json:"deploy_time"`
 	CreateTime int64  `json:"create_time"`
 	UpdateTime int64  `json:"update_time"`
 }
@@ -90,6 +91,7 @@ func ListEnv(c *gin.Context) {
 			Key:        env.Key,
 			Weight:     env.Weight,
 			Filter:     env.Filter,
+			DeployTime: env.DeployTime,
 			CreateTime: env.CreateTime,
 			UpdateTime: env.UpdateTime,
 		})
