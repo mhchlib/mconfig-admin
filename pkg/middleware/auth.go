@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"github.com/casbin/casbin/v2"
+	"github.com/casbin/casbin/v2/model"
 	gormadapter "github.com/casbin/gorm-adapter/v2"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -38,7 +39,12 @@ func AuthInit() error {
 	if err != nil {
 		return err
 	}
-	e, err := casbin.NewSyncedEnforcer("conf/casbin.conf", Apter)
+	m := model.Model{}
+	err = m.LoadModelFromText(CASBIN)
+	if err != nil {
+		return err
+	}
+	e, err := casbin.NewSyncedEnforcer(m, Apter)
 	if err != nil {
 		return err
 	}

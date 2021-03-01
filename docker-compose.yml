@@ -1,0 +1,25 @@
+version: '2'
+networks:
+  micro_network:
+    name: micro_network
+
+services:
+  mconfig-admin:
+    image: dockerhcy/mconfig-admin
+    container_name: etcd2
+    restart: always
+    command: etcd -name etcd2 -advertise-client-urls http://0.0.0.0:2379 -listen-client-urls http://0.0.0.0:2379 -listen-peer-urls http://0.0.0.0:2380 -initial-cluster-token etcd-cluster -initial-cluster "etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380" -initial-cluster-state new
+    ports:
+      - 2379
+      - 2380
+    networks:
+      - micro_network
+
+  db:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: passwd

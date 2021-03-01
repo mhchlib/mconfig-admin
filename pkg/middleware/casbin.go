@@ -1,3 +1,6 @@
+package middleware
+
+const CASBIN = `
 [request_definition]
 r = sub, obj, act
 
@@ -12,3 +15,4 @@ e = some(where (p.eft == allow))
 
 [matchers]
 m = (g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act) ) || (r.sub == p.sub  && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act))
+`

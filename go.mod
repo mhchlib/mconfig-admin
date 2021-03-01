@@ -19,6 +19,9 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.7.1
 	google.golang.org/grpc v1.26.0
+	github.com/mhchlib/logger v0.0.2
+    github.com/mhchlib/mconfig-api v0.0.1
+    github.com/mhchlib/register v0.0.1
 )
 
 replace github.com/mhchlib/register v0.0.0-20201023050446-420de20374cc => ../register
