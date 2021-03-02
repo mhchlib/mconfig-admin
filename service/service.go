@@ -40,6 +40,7 @@ func GetServiceDetail(c *gin.Context) {
 		tools.ResponseDefaultFail(c, err)
 		return
 	}
+	_ = dial.Close()
 	v := &mconfig.NodeDetail{}
 	err = json.Unmarshal(data.Data, v)
 	if err != nil {
@@ -71,21 +72,21 @@ func UpdateServiceDetail(c *gin.Context) {
 	//check param.ConfigVal
 	configStoreVal := &mconfig.StoreVal{}
 	err = json.Unmarshal([]byte(param.ConfigVal), configStoreVal)
-	if err!=nil {
+	if err != nil {
 		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	configStoreVal.Md5 = mconfig.GetInterfaceMd5(configStoreVal.Data)
-	bs,_ := json.Marshal(configStoreVal)
+	bs, _ := json.Marshal(configStoreVal)
 	param.ConfigVal = string(bs)
 	configStoreVal = &mconfig.StoreVal{}
 	err = json.Unmarshal([]byte(param.Filter), configStoreVal)
-	if err!=nil {
+	if err != nil {
 		tools.ResponseDefaultFail(c, err)
 		return
 	}
 	configStoreVal.Md5 = mconfig.GetInterfaceMd5(configStoreVal.Data)
-	bs,_ = json.Marshal(configStoreVal)
+	bs, _ = json.Marshal(configStoreVal)
 	param.Filter = string(bs)
 
 	withTimeout, _ := context.WithTimeout(context.Background(), time.Second*5)
@@ -104,6 +105,7 @@ func UpdateServiceDetail(c *gin.Context) {
 		Filter: param.Filter,
 		Val:    param.ConfigVal,
 	})
+	_ = dial.Close()
 	if err != nil {
 		log.Error(err)
 		tools.ResponseDefaultFail(c, err)
@@ -161,6 +163,6 @@ func DeleteServiceItem(c *gin.Context) {
 			return
 		}
 	}
-
+	_ = dial.Close()
 	tools.ResponseDefaultFail(c, "type 错误")
 }

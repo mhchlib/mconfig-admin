@@ -151,6 +151,7 @@ func DeployUpdateConfig(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.UpdateConfig(withTimeout, configData)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
@@ -170,6 +171,7 @@ func DeployUpdateConfig(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.UpdateConfig(withTimeout, configData)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
@@ -282,6 +284,7 @@ func DeployUpdateFilter(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.UpdateFilter(withTimeout, filterRequest)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
@@ -301,6 +304,7 @@ func DeployUpdateFilter(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.UpdateFilter(withTimeout, filterRequest)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
@@ -381,6 +385,7 @@ func DeployDeleteFilter(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.DeletFilter(withTimeout, filterRequest)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
@@ -400,6 +405,7 @@ func DeployDeleteFilter(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.DeletFilter(withTimeout, filterRequest)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
@@ -486,6 +492,7 @@ func DeployDeleteConfig(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.DeletConfig(withTimeout, configRequest)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
@@ -505,6 +512,7 @@ func DeployDeleteConfig(c *gin.Context) {
 			mconfigService := server.NewMConfigClient(dial)
 			withTimeout, _ = context.WithTimeout(context.Background(), time.Second*20)
 			_, err = mconfigService.DeletConfig(withTimeout, configRequest)
+			_ = dial.Close()
 			if err != nil {
 				log.Error(err)
 				tools.ResponseDefaultFail(c, err)
