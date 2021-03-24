@@ -9,14 +9,17 @@ import (
 	"strconv"
 )
 
+// AddAppRequest ...
 type AddAppRequest struct {
 	Name string `form:"name"  binding:"required"`
 	Key  string `form:"key"`
 	Desc string `form:"desc"`
 }
 
+// PREFIX_APP_KEY ...
 const PREFIX_APP_KEY = "app_"
 
+// AddApp ...
 func AddApp(c *gin.Context) {
 	var param AddAppRequest
 	err := c.Bind(&param)
@@ -43,12 +46,14 @@ func AddApp(c *gin.Context) {
 	return
 }
 
+// ListAppRequest ...
 type ListAppRequest struct {
 	Filter string `form:"filter"`
 	Limit  int    `form:"limit"`
 	Offset int    `form:"offset"`
 }
 
+// ListAppResponse ...
 type ListAppResponse struct {
 	Id         int    `json:"id"`
 	Name       string `json:"name"`
@@ -58,6 +63,7 @@ type ListAppResponse struct {
 	UpdateTime int64  `json:"update_time"`
 }
 
+// ListApp ...
 func ListApp(c *gin.Context) {
 	var param ListAppRequest
 	err := c.Bind(&param)
@@ -88,6 +94,7 @@ func ListApp(c *gin.Context) {
 	return
 }
 
+// DeleteAPP ...
 func DeleteAPP(c *gin.Context) {
 	id := c.Param("id")
 	log.Info(id)
@@ -104,11 +111,13 @@ func DeleteAPP(c *gin.Context) {
 	tools.ResponseDefaultSuccess(c, nil)
 }
 
+// UpdateAppRequest ...
 type UpdateAppRequest struct {
 	Name string `form:"name"`
 	Desc string `form:"desc"`
 }
 
+// UpdateApp ...
 func UpdateApp(c *gin.Context) {
 	id := c.Param("id")
 	param := &UpdateAppRequest{}

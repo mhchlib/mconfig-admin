@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Tag ...
 type Tag struct {
 	Id          int    `gorm:"primary_key,column:id" json:"id"`
 	Tag         string `gorm:"column:tag" json:"tag" `
@@ -17,10 +18,12 @@ type Tag struct {
 	UpdateTime  int64  `gorm:"column:update_time" json:"update_time"`
 }
 
+// TableName ...
 func (Tag) TableName() string {
 	return "m_tag"
 }
 
+// InsertTag ...
 func InsertTag(tag, desc string, configId int, config string, schema string) error {
 	create := db.Create(&Tag{
 		Tag:         tag,
@@ -34,6 +37,7 @@ func InsertTag(tag, desc string, configId int, config string, schema string) err
 	return create.Error
 }
 
+// ListTags ...
 func ListTags(configId int, filter string, limit int, offset int) ([]*Tag, error) {
 	tags := make([]*Tag, 0)
 	fields := []string{"id", "tag", "description", "create_time", "update_time"}
@@ -44,6 +48,7 @@ func ListTags(configId int, filter string, limit int, offset int) ([]*Tag, error
 	return tags, nil
 }
 
+// DeleteTag ...
 func DeleteTag(id int) error {
 	tag := &Tag{}
 	tag.Id = id
@@ -54,6 +59,7 @@ func DeleteTag(id int) error {
 	return nil
 }
 
+// GetTag ...
 func GetTag(id int) (*Tag, error) {
 	f := &Tag{
 		Id: id,

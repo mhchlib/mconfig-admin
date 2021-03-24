@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// AddEnvRequest ...
 type AddEnvRequest struct {
 	App    int    `form:"app"  binding:"required"`
 	Filter string `form:"filter"`
@@ -18,6 +19,7 @@ type AddEnvRequest struct {
 	Desc   string `form:"desc"`
 }
 
+// AddEnv ...
 func AddEnv(c *gin.Context) {
 	var param AddEnvRequest
 	err := c.Bind(&param)
@@ -48,6 +50,7 @@ func AddEnv(c *gin.Context) {
 	return
 }
 
+// ListEnvRequest ...
 type ListEnvRequest struct {
 	App    int    `form:"app"`
 	Filter string `form:"filter"`
@@ -55,6 +58,7 @@ type ListEnvRequest struct {
 	Offset int    `form:"offset"`
 }
 
+// ListEnvResponse ...
 type ListEnvResponse struct {
 	Id         int    `json:"id"`
 	Name       string `json:"name"`
@@ -67,6 +71,7 @@ type ListEnvResponse struct {
 	UpdateTime int64  `json:"update_time"`
 }
 
+// ListEnv ...
 func ListEnv(c *gin.Context) {
 	param := &ListEnvRequest{}
 	err := c.Bind(&param)
@@ -104,6 +109,7 @@ func ListEnv(c *gin.Context) {
 	return
 }
 
+// DeleteEnv ...
 func DeleteEnv(c *gin.Context) {
 	id := c.Param("id")
 	log.Info(id)
@@ -120,12 +126,14 @@ func DeleteEnv(c *gin.Context) {
 	tools.ResponseDefaultSuccess(c, nil)
 }
 
+// UpdateEnvRequest ...
 type UpdateEnvRequest struct {
 	Name   string `form:"name"`
 	Desc   string `form:"desc"`
 	Weight int    `json:"weight"`
 }
 
+// UpdateEnv ...
 func UpdateEnv(c *gin.Context) {
 	idStr := c.Param("id")
 	param := &UpdateEnvRequest{}
@@ -149,10 +157,12 @@ func UpdateEnv(c *gin.Context) {
 	return
 }
 
+// UpdateEnvFilterRequest ...
 type UpdateEnvFilterRequest struct {
 	Filter int `form:"filter"`
 }
 
+// UpdateEnvFilter ...
 func UpdateEnvFilter(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// CustomError ...
 func CustomError(c *gin.Context) {
 	defer func() {
 		if err := recover(); err != nil {

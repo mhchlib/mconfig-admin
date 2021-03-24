@@ -20,6 +20,7 @@ var jwtMiddleware *jwtUtil.GinJWTMiddleware
 
 var enforcer casbin.IEnforcer
 
+// AuthInit ...
 func AuthInit() error {
 	middleware, err := jwtUtil.New(&jwtUtil.GinJWTMiddleware{
 		Realm:       "test zone",
@@ -58,6 +59,7 @@ func AuthInit() error {
 	return nil
 }
 
+// PayloadFunc ...
 func PayloadFunc(data interface{}) jwtUtil.MapClaims {
 	if v, ok := data.(map[string]interface{}); ok {
 		return jwtUtil.MapClaims(jwt.MapClaims{
@@ -68,6 +70,7 @@ func PayloadFunc(data interface{}) jwtUtil.MapClaims {
 	return jwtUtil.MapClaims{}
 }
 
+// Auth ...
 func Auth(c *gin.Context) {
 	//check white list
 	whitelist := []string{"/api/v1/user/login"}
@@ -105,6 +108,7 @@ func Auth(c *gin.Context) {
 	c.Next()
 }
 
+// GetJwtMiddleware ...
 func GetJwtMiddleware() *jwtUtil.GinJWTMiddleware {
 	return jwtMiddleware
 }

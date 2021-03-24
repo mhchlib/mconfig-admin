@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// AddConfigRequest ...
 type AddConfigRequest struct {
 	App  int    `form:"app" binding:"required"`
 	Env  int    `form:"env" binding:"required"`
@@ -17,6 +18,7 @@ type AddConfigRequest struct {
 	Desc string `form:"desc"`
 }
 
+// AddConfig ...
 func AddConfig(c *gin.Context) {
 	var param AddConfigRequest
 	err := c.Bind(&param)
@@ -47,6 +49,7 @@ func AddConfig(c *gin.Context) {
 	return
 }
 
+// ListConfigRequest ...
 type ListConfigRequest struct {
 	App    int    `form:"app"`
 	Env    int    `form:"env"`
@@ -55,6 +58,7 @@ type ListConfigRequest struct {
 	Offset int    `form:"offset"`
 }
 
+// ListConfigResponse ...
 type ListConfigResponse struct {
 	Id         int    `json:"id"`
 	Name       string `json:"name"`
@@ -63,11 +67,12 @@ type ListConfigResponse struct {
 	Config     string `json:"config"`
 	Schema     string `json:"schema"`
 	DeployTime int64  `json:"deploy_time"`
-	DeployTag  string    `json:"deploy_tag"`
+	DeployTag  string `json:"deploy_tag"`
 	CreateTime int64  `json:"create_time"`
 	UpdateTime int64  `json:"update_time"`
 }
 
+// ListConfig ...
 func ListConfig(c *gin.Context) {
 	param := &ListConfigRequest{}
 	err := c.Bind(&param)
@@ -91,7 +96,7 @@ func ListConfig(c *gin.Context) {
 	for _, config := range configs {
 		deployTag := "-"
 		tag, err := model.GetTag(config.DeployTag)
-		if err==nil {
+		if err == nil {
 			deployTag = tag.Tag
 		}
 		data = append(data, &ListConfigResponse{
@@ -115,6 +120,7 @@ func ListConfig(c *gin.Context) {
 	return
 }
 
+// DeleteConfig ...
 func DeleteConfig(c *gin.Context) {
 	id := c.Param("id")
 	log.Info(id)
@@ -131,11 +137,13 @@ func DeleteConfig(c *gin.Context) {
 	tools.ResponseDefaultSuccess(c, nil)
 }
 
+// UpdateConfigRequest ...
 type UpdateConfigRequest struct {
 	Name string `form:"name"`
 	Desc string `form:"desc"`
 }
 
+// UpdateConfig ...
 func UpdateConfig(c *gin.Context) {
 	idStr := c.Param("id")
 	param := &UpdateConfigRequest{}
@@ -159,10 +167,12 @@ func UpdateConfig(c *gin.Context) {
 	return
 }
 
+// UpdateConfigValRequest ...
 type UpdateConfigValRequest struct {
 	Val string `form:"config"`
 }
 
+// UpdateConfigVal ...
 func UpdateConfigVal(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -185,10 +195,12 @@ func UpdateConfigVal(c *gin.Context) {
 	return
 }
 
+// UpdateConfigSchemaRequest ...
 type UpdateConfigSchemaRequest struct {
 	Val string `form:"config"`
 }
 
+// UpdateConfigSchema ...
 func UpdateConfigSchema(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -211,11 +223,13 @@ func UpdateConfigSchema(c *gin.Context) {
 	return
 }
 
+// UpdateConfigValAndConfigRequest ...
 type UpdateConfigValAndConfigRequest struct {
 	Config string `form:"config"`
 	Schema string `form:"schema"`
 }
 
+// UpdateConfigValAndConfig ...
 func UpdateConfigValAndConfig(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)

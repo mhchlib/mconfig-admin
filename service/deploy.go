@@ -15,11 +15,13 @@ import (
 	"time"
 )
 
+// DeployUpdateConfigRequest ...
 type DeployUpdateConfigRequest struct {
 	Cluster int `form:"cluster" binding:"required"`
 	Tag     int `form:"tag" binding:"required"`
 }
 
+// DeployUpdateConfig ...
 func DeployUpdateConfig(c *gin.Context) {
 	var param DeployUpdateConfigRequest
 	err := c.Bind(&param)
@@ -184,11 +186,13 @@ func DeployUpdateConfig(c *gin.Context) {
 	return
 }
 
+// DeployUpdateFilterRequest ...
 type DeployUpdateFilterRequest struct {
 	Cluster int `form:"cluster" binding:"required"`
 	Env     int `form:"env" binding:"required"`
 }
 
+// DeployUpdateFilter ...
 func DeployUpdateFilter(c *gin.Context) {
 	var param DeployUpdateFilterRequest
 	err := c.Bind(&param)
@@ -317,11 +321,13 @@ func DeployUpdateFilter(c *gin.Context) {
 	return
 }
 
+// DeployDeleteFilterRequest ...
 type DeployDeleteFilterRequest struct {
 	Cluster int `form:"cluster" binding:"required"`
 	Env     int `form:"env" binding:"required"`
 }
 
+// DeployDeleteFilter ...
 func DeployDeleteFilter(c *gin.Context) {
 	var param DeployDeleteFilterRequest
 	err := c.Bind(&param)
@@ -417,11 +423,13 @@ func DeployDeleteFilter(c *gin.Context) {
 	return
 }
 
+// DeployDeleteConfigRequest ...
 type DeployDeleteConfigRequest struct {
 	Cluster int `form:"cluster" binding:"required"`
 	Config  int `form:"config" binding:"required"`
 }
 
+// DeployDeleteConfig ...
 func DeployDeleteConfig(c *gin.Context) {
 	var param DeployDeleteConfigRequest
 	err := c.Bind(&param)

@@ -13,11 +13,13 @@ import (
 	"time"
 )
 
+// GetServiceDetailRequest ...
 type GetServiceDetailRequest struct {
 	Cluster int    `form:"cluster"`
 	Service string `form:"service"  binding:"required"`
 }
 
+// GetServiceDetail ...
 func GetServiceDetail(c *gin.Context) {
 	var param GetServiceDetailRequest
 	err := c.Bind(&param)
@@ -52,6 +54,7 @@ func GetServiceDetail(c *gin.Context) {
 	return
 }
 
+// UpdateServiceDetailRequest ...
 type UpdateServiceDetailRequest struct {
 	Service   string `json:"service"`
 	App       string `json:"app"`
@@ -62,6 +65,7 @@ type UpdateServiceDetailRequest struct {
 	Type      string `json:"type"`
 }
 
+// UpdateServiceDetail ...
 func UpdateServiceDetail(c *gin.Context) {
 	param := &UpdateServiceDetailRequest{}
 	err := c.Bind(&param)
@@ -114,6 +118,7 @@ func UpdateServiceDetail(c *gin.Context) {
 	tools.ResponseDefaultSuccess(c, nil)
 }
 
+// DeleteServiceItemRequest ...
 type DeleteServiceItemRequest struct {
 	Service string `json:"service"`
 	App     string `json:"app"`
@@ -123,6 +128,7 @@ type DeleteServiceItemRequest struct {
 	Type    string `json:"type"`
 }
 
+// DeleteServiceItem ...
 func DeleteServiceItem(c *gin.Context) {
 	param := &UpdateServiceDetailRequest{}
 	err := c.Bind(&param)

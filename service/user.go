@@ -9,11 +9,13 @@ import (
 	"strconv"
 )
 
+// LoginRequest ...
 type LoginRequest struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
+// Login ...
 func Login(c *gin.Context) {
 	param := &LoginRequest{}
 	err := c.Bind(&param)

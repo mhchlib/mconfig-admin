@@ -9,12 +9,14 @@ import (
 	"strconv"
 )
 
+// AddClusterRequest ...
 type AddClusterRequest struct {
 	Namespace string `form:"namespace"  binding:"required"`
 	Register  string `form:"register"  binding:"required"`
 	Desc      string `form:"desc"`
 }
 
+// AddCluster ...
 func AddCluster(c *gin.Context) {
 	var param AddClusterRequest
 	err := c.Bind(&param)
@@ -32,12 +34,14 @@ func AddCluster(c *gin.Context) {
 	return
 }
 
+// ListClusterRequest ...
 type ListClusterRequest struct {
 	Filter string `form:"filter"`
 	Limit  int    `form:"limit"`
 	Offset int    `form:"offset"`
 }
 
+// ListClusterResponse ...
 type ListClusterResponse struct {
 	Id         int    `json:"id"`
 	Namespace  string `json:"namespace"`
@@ -47,6 +51,7 @@ type ListClusterResponse struct {
 	UpdateTime int64  `json:"update_time"`
 }
 
+// ListCluster ...
 func ListCluster(c *gin.Context) {
 	param := &ListClusterRequest{}
 	err := c.Bind(&param)
@@ -77,6 +82,7 @@ func ListCluster(c *gin.Context) {
 	return
 }
 
+// DeleteCluster ...
 func DeleteCluster(c *gin.Context) {
 	id := c.Param("id")
 	log.Info(id)
@@ -93,12 +99,14 @@ func DeleteCluster(c *gin.Context) {
 	tools.ResponseDefaultSuccess(c, nil)
 }
 
+// UpdateClusterRequest ...
 type UpdateClusterRequest struct {
 	Namespace string `form:"namespace"`
 	Register  string `form:"register"`
 	Desc      string `form:"desc"`
 }
 
+// UpdateCluster ...
 func UpdateCluster(c *gin.Context) {
 	id := c.Param("id")
 	param := &UpdateClusterRequest{}
@@ -122,11 +130,13 @@ func UpdateCluster(c *gin.Context) {
 	return
 }
 
+// GetClusterRepsonse ...
 type GetClusterRepsonse struct {
 	*model.Cluster
 	Services []*register.ServiceVal `json:"services"`
 }
 
+// GetCluster ...
 func GetCluster(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)

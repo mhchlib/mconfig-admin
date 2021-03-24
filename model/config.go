@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Config ...
 type Config struct {
 	Id          int    `gorm:"primary_key,column:id"`
 	App         int    `gorm:"column:app_id"`
@@ -22,10 +23,12 @@ type Config struct {
 	UpdateTime  int64  `gorm:"column:update_time"`
 }
 
+// TableName ...
 func (Config) TableName() string {
 	return "m_config"
 }
 
+// InsertConfig ...
 func InsertConfig(app int, env int, name, desc, key string) error {
 	create := db.Create(&Config{
 		App:         app,
@@ -39,6 +42,7 @@ func InsertConfig(app int, env int, name, desc, key string) error {
 	return create.Error
 }
 
+// CheckConfigKeyUnique ...
 func CheckConfigKeyUnique(app int, env int, key string) bool {
 	first := db.Where(&Config{App: app, Env: env, Key: key}).First(&Config{})
 	if first.Error == nil {
@@ -47,9 +51,10 @@ func CheckConfigKeyUnique(app int, env int, key string) bool {
 	return true
 }
 
+// ListConfigs ...
 func ListConfigs(app int, env int, filter string, limit int, offset int) ([]*Config, error) {
 	configs := make([]*Config, 0)
-	fields := []string{"id", "config_name", "description", "config_key", "config_value", "config_schema","deploy_time","deploy_tag", "create_time", "update_time"}
+	fields := []string{"id", "config_name", "description", "config_key", "config_value", "config_schema", "deploy_time", "deploy_tag", "create_time", "update_time"}
 	find := db.Select(fields).Where("app_id = ? and env_id = ?  and (config_name LIKE ? or description LIKE ?)", app, env, "%"+filter+"%", "%"+filter+"%").Order("update_time desc").Limit(limit).Offset(offset).Find(&configs)
 	if find.Error != nil {
 		return nil, find.Error
@@ -57,6 +62,7 @@ func ListConfigs(app int, env int, filter string, limit int, offset int) ([]*Con
 	return configs, nil
 }
 
+// DeleteConfig ...
 func DeleteConfig(id int) error {
 	config := &Config{}
 	config.Id = id
@@ -67,6 +73,7 @@ func DeleteConfig(id int) error {
 	return nil
 }
 
+// UpdateConfig ...
 func UpdateConfig(id int, name string, desc string) error {
 	config := &Config{
 		Id:          id,
@@ -81,6 +88,7 @@ func UpdateConfig(id int, name string, desc string) error {
 	return nil
 }
 
+// UpdateConfigVal ...
 func UpdateConfigVal(id int, val string) error {
 	config := &Config{
 		Id:         id,
@@ -94,6 +102,7 @@ func UpdateConfigVal(id int, val string) error {
 	return nil
 }
 
+// UpdateConfigSchema ...
 func UpdateConfigSchema(id int, schema string) error {
 	config := &Config{
 		Id:         id,
@@ -107,6 +116,7 @@ func UpdateConfigSchema(id int, schema string) error {
 	return nil
 }
 
+// UpdateConfigValAndConfig ...
 func UpdateConfigValAndConfig(id int, val string, schema string) error {
 	config := &Config{
 		Id:         id,
@@ -121,6 +131,7 @@ func UpdateConfigValAndConfig(id int, val string, schema string) error {
 	return nil
 }
 
+// GetConfig ...
 func GetConfig(id int) (*Config, error) {
 	f := &Config{
 		Id: id,
@@ -132,6 +143,7 @@ func GetConfig(id int) (*Config, error) {
 	return f, nil
 }
 
+// CountConfig ...
 func CountConfig() (interface{}, error) {
 	var count int
 	c := db.Model(&Config{}).Count(&count)
@@ -141,10 +153,11 @@ func CountConfig() (interface{}, error) {
 	return count, nil
 }
 
-func UpdateConfigDeployData(id int,tag int) error {
+// UpdateConfigDeployData ...
+func UpdateConfigDeployData(id int, tag int) error {
 	env := &Config{
-		Id:          id,
-		DeployTime:  time.Now().Unix(),
+		Id:         id,
+		DeployTime: time.Now().Unix(),
 		DeployTag:  tag,
 	}
 	update := db.Model(env).Update(env)

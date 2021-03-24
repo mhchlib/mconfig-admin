@@ -5,15 +5,22 @@ import (
 	"net/http"
 )
 
+// ResponseCode ...
 type ResponseCode int
+
+// ResponseMsg ...
 type ResponseMsg string
 
 var resp map[ResponseCode]ResponseMsg
 
 const (
-	CODE_ERROR_PARAM        ResponseCode = 1000
-	CODE_FAIL_REQUEST       ResponseCode = 1001
-	CODE_SUCCESS_REQUEST    ResponseCode = 1002
+	// CODE_ERROR_PARAM ...
+	CODE_ERROR_PARAM ResponseCode = 1000
+	// CODE_FAIL_REQUEST ...
+	CODE_FAIL_REQUEST ResponseCode = 1001
+	// CODE_SUCCESS_REQUEST ...
+	CODE_SUCCESS_REQUEST ResponseCode = 1002
+	// CODE_FAIL_TOKEN_INVALID ...
 	CODE_FAIL_TOKEN_INVALID ResponseCode = 1003
 )
 
@@ -26,10 +33,12 @@ func init() {
 	}
 }
 
+// GetResponseMsg ...
 func GetResponseMsg(code ResponseCode) ResponseMsg {
 	return resp[code]
 }
 
+// GetResponse ...
 func GetResponse(code ResponseCode) map[string]interface{} {
 	m := make(map[string]interface{})
 	m["code"] = code
@@ -37,6 +46,7 @@ func GetResponse(code ResponseCode) map[string]interface{} {
 	return m
 }
 
+// Response ...
 func Response(c *gin.Context, code interface{}, msg interface{}, data interface{}) {
 	c.JSON(http.StatusOK, &gin.H{
 		"code": code,
@@ -45,6 +55,7 @@ func Response(c *gin.Context, code interface{}, msg interface{}, data interface{
 	})
 }
 
+// Response403 ...
 func Response403(c *gin.Context) {
 	c.JSON(http.StatusForbidden, &gin.H{
 		"msg":  "没有权限",
@@ -52,6 +63,7 @@ func Response403(c *gin.Context) {
 	})
 }
 
+// ResponseTokenInvalid ...
 func ResponseTokenInvalid(c *gin.Context) {
 	c.JSON(http.StatusOK, &gin.H{
 		"msg":  resp[CODE_FAIL_TOKEN_INVALID],
@@ -59,14 +71,17 @@ func ResponseTokenInvalid(c *gin.Context) {
 	})
 }
 
+// ResponseParamErrorWithMsg ...
 func ResponseParamErrorWithMsg(c *gin.Context, msg string) {
 	Response(c, CODE_ERROR_PARAM, string(GetResponseMsg(CODE_ERROR_PARAM))+", "+msg, nil)
 }
 
+// ResponseParamError ...
 func ResponseParamError(c *gin.Context) {
 	Response(c, CODE_ERROR_PARAM, GetResponseMsg(CODE_ERROR_PARAM), nil)
 }
 
+// ResponseDefaultFail ...
 func ResponseDefaultFail(c *gin.Context, msg interface{}) {
 	switch msg.(type) {
 	case error:
@@ -80,10 +95,12 @@ func ResponseDefaultFail(c *gin.Context, msg interface{}) {
 	Response(c, CODE_FAIL_REQUEST, GetResponseMsg(CODE_FAIL_REQUEST), nil)
 }
 
+// ResponseDefaultSuccess ...
 func ResponseDefaultSuccess(c *gin.Context, data interface{}) {
 	Response(c, CODE_SUCCESS_REQUEST, GetResponseMsg(CODE_SUCCESS_REQUEST), data)
 }
 
+// ResponseCustom ...
 func ResponseCustom(c *gin.Context, code ResponseCode, msg interface{}, data interface{}) {
 	if msg != nil {
 		Response(c, code, msg, data)

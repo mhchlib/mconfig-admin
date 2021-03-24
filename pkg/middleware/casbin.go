@@ -1,5 +1,6 @@
 package middleware
 
+// CASBIN ...
 const CASBIN = `
 [request_definition]
 r = sub, obj, act

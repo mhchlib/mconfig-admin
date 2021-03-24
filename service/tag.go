@@ -8,12 +8,14 @@ import (
 	"strconv"
 )
 
+// BuildTagRequest ...
 type BuildTagRequest struct {
 	Tag    string `form:"tag"  binding:"required"`
 	Desc   string `form:"desc"`
 	Config int    `form:"config"  binding:"required"`
 }
 
+// BuildTag ...
 func BuildTag(c *gin.Context) {
 	var param BuildTagRequest
 	err := c.Bind(&param)
@@ -37,6 +39,7 @@ func BuildTag(c *gin.Context) {
 	return
 }
 
+// ListTagRequest ...
 type ListTagRequest struct {
 	Config int    `form:"config"  binding:"required"`
 	Filter string `form:"filter"`
@@ -44,6 +47,7 @@ type ListTagRequest struct {
 	Offset int    `form:"offset"`
 }
 
+// ListTagResponse ...
 type ListTagResponse struct {
 	Id         int    `json:"id"`
 	Tag        string `json:"tag"`
@@ -52,6 +56,7 @@ type ListTagResponse struct {
 	UpdateTime int64  `json:"update_time"`
 }
 
+// ListTag ...
 func ListTag(c *gin.Context) {
 	var param ListTagRequest
 	err := c.Bind(&param)
@@ -81,6 +86,7 @@ func ListTag(c *gin.Context) {
 	return
 }
 
+// DeleteTag ...
 func DeleteTag(c *gin.Context) {
 	id := c.Param("id")
 	log.Info(id)
@@ -97,6 +103,7 @@ func DeleteTag(c *gin.Context) {
 	tools.ResponseDefaultSuccess(c, nil)
 }
 
+// GetTag ...
 func GetTag(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)

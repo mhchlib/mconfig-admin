@@ -6,6 +6,7 @@ import (
 	"github.com/mhchlib/mconfig-admin/pkg/tools"
 )
 
+// Dashboard ...
 func Dashboard(c *gin.Context) {
 	data := make(map[string]interface{})
 	app, err := model.CountApp()

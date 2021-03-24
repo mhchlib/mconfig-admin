@@ -4,12 +4,15 @@ import (
 	"time"
 )
 
+// Mode_FILTER ...
 type Mode_FILTER int
 
 const (
+	// Mode_FILTER_LUA ...
 	Mode_FILTER_LUA Mode_FILTER = 1
 )
 
+// Filter ...
 type Filter struct {
 	Id         int         `gorm:"primary_key,column:id" json:"id"`
 	Mode       Mode_FILTER `gorm:"column:mode" json:"mode"`
@@ -20,6 +23,7 @@ type Filter struct {
 	UpdateTime int64       `gorm:"column:update_time" json:"update_time"`
 }
 
+// FilterModel ...
 type FilterModel struct {
 	Id       int    `gorm:"primary_key,column:id" json:"id"`
 	Name     string `gorm:"column:name" json:"name"`
@@ -27,14 +31,17 @@ type FilterModel struct {
 	Note     string `gorm:"column:note" json:"note"`
 }
 
+// TableName ...
 func (Filter) TableName() string {
 	return "m_filter"
 }
 
+// TableName ...
 func (FilterModel) TableName() string {
 	return "m_filter_mode"
 }
 
+// InsertFilter ...
 func InsertFilter(filterMode Mode_FILTER, filter string) (int, error) {
 	f := &Filter{
 		Mode:       filterMode,
@@ -49,6 +56,7 @@ func InsertFilter(filterMode Mode_FILTER, filter string) (int, error) {
 	return f.Id, nil
 }
 
+// DeleteFilter ...
 func DeleteFilter(id int) error {
 	filter := &Filter{}
 	filter.Id = id
@@ -59,6 +67,7 @@ func DeleteFilter(id int) error {
 	return nil
 }
 
+// UpdateFilter ...
 func UpdateFilter(id int, filterType Mode_FILTER, filter string) error {
 	f := &Filter{
 		Id:         id,
@@ -73,6 +82,7 @@ func UpdateFilter(id int, filterType Mode_FILTER, filter string) error {
 	return nil
 }
 
+// GetFilter ...
 func GetFilter(id int) (*Filter, error) {
 	f := &Filter{
 		Id: id,
@@ -84,6 +94,7 @@ func GetFilter(id int) (*Filter, error) {
 	return f, nil
 }
 
+// GetFilterModes ...
 func GetFilterModes() ([]*FilterModel, error) {
 	modes := make([]*FilterModel, 0)
 	find := db.Find(&modes)
@@ -93,6 +104,7 @@ func GetFilterModes() ([]*FilterModel, error) {
 	return modes, nil
 }
 
+// GetFilterMode ...
 func GetFilterMode(id int) (string, error) {
 	mode := &FilterModel{
 		Id: id,

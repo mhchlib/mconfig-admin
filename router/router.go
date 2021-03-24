@@ -5,6 +5,7 @@ import (
 	"github.com/mhchlib/mconfig-admin/service"
 )
 
+// AddRouters ...
 func AddRouters(engine *gin.Engine) {
 	api := engine.Group("/api")
 	addV1Routers(api)

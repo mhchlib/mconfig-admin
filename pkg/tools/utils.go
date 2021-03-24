@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// StrToInt ...
 func StrToInt(err error, index string) int {
 	result, err := strconv.Atoi(index)
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Cluster ...
 type Cluster struct {
 	Id          int    `gorm:"primary_key,column:id" json:"id"`
 	Namespace   string `gorm:"column:namespace"  json:"namespace"`
@@ -15,10 +16,12 @@ type Cluster struct {
 	UpdateTime  int64  `gorm:"column:update_time" json:"update_time"`
 }
 
+// TableName ...
 func (Cluster) TableName() string {
 	return "m_cluster"
 }
 
+// InsertCluster ...
 func InsertCluster(namespace, register, desc string) error {
 	create := db.Create(&Cluster{
 		Namespace:   namespace,
@@ -30,6 +33,7 @@ func InsertCluster(namespace, register, desc string) error {
 	return create.Error
 }
 
+// ListClusters ...
 func ListClusters(filter string, limit int, offset int) ([]*Cluster, error) {
 	clusters := make([]*Cluster, 0)
 	fields := []string{"id", "namespace", "description", "register", "create_time", "update_time"}
@@ -40,6 +44,7 @@ func ListClusters(filter string, limit int, offset int) ([]*Cluster, error) {
 	return clusters, nil
 }
 
+// DeleteCluster ...
 func DeleteCluster(id int) error {
 	cluster := &Cluster{}
 	cluster.Id = id
@@ -50,6 +55,7 @@ func DeleteCluster(id int) error {
 	return nil
 }
 
+// UpdateCluster ...
 func UpdateCluster(id int, namespace string, register string, desc string) error {
 	cluster := &Cluster{
 		Id:          id,
@@ -65,6 +71,7 @@ func UpdateCluster(id int, namespace string, register string, desc string) error
 	return nil
 }
 
+// GetCluster ...
 func GetCluster(id int) (*Cluster, error) {
 	f := &Cluster{
 		Id: id,
@@ -76,6 +83,7 @@ func GetCluster(id int) (*Cluster, error) {
 	return f, nil
 }
 
+// CountCluster ...
 func CountCluster() (interface{}, error) {
 	var count int
 	c := db.Model(&Cluster{}).Count(&count)

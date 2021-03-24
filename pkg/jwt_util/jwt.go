@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// MapClaims ...
 type MapClaims map[string]interface{}
 
 // GinJWTMiddleware provides a Json-Web-Token authentication implementation. On failure, a 401 HTTP Response
@@ -185,6 +186,7 @@ var (
 	// ErrInvalidSigningAlgorithm indicates signing algorithm is invalid, needs to be HS256, HS384, HS512, RS256, RS384 or RS512
 	ErrInvalidSigningAlgorithm = errors.New("invalid signing algorithm")
 
+	// ErrInvalidVerificationode ...
 	ErrInvalidVerificationode = errors.New("验证码错误")
 
 	// ErrNoPrivKeyFile indicates that the given private key is unreadable
@@ -202,12 +204,16 @@ var (
 	// IdentityKey default identity key
 	IdentityKey = "identity"
 
+	// NiceKey ...
 	NiceKey = "nice"
 
+	// RoleIdKey ...
 	RoleIdKey = "roleid"
 
+	// RoleKey ...
 	RoleKey = "rolekey"
 
+	// RoleNameKey ...
 	RoleNameKey = "rolename"
 
 	timeout = 2 * 60 * 60 //2h

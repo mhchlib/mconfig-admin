@@ -8,11 +8,13 @@ import (
 	"strconv"
 )
 
+// AddFilterRequest ...
 type AddFilterRequest struct {
 	Filter string `form:"filter"`
 	Mode   int    `json:"mode"`
 }
 
+// AddFilter ...
 func AddFilter(c *gin.Context) {
 	param := &AddFilterRequest{}
 	err := c.Bind(&param)
@@ -30,12 +32,14 @@ func AddFilter(c *gin.Context) {
 	return
 }
 
+// UpdateFilterRequest ...
 type UpdateFilterRequest struct {
 	Id     int    `form:"id"`
 	Filter string `form:"filter"`
 	Mode   int    `json:"mode"`
 }
 
+// UpdateFilter ...
 func UpdateFilter(c *gin.Context) {
 	param := &UpdateFilterRequest{}
 	err := c.Bind(&param)
@@ -52,6 +56,7 @@ func UpdateFilter(c *gin.Context) {
 	return
 }
 
+// GetFilter ...
 func GetFilter(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
@@ -68,6 +73,7 @@ func GetFilter(c *gin.Context) {
 	return
 }
 
+// GetFilterMode ...
 func GetFilterMode(c *gin.Context) {
 	modes, err := model.GetFilterModes()
 	if err != nil {

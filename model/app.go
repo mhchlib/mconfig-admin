@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// App ...
 type App struct {
 	Id          int    `gorm:"primary_key,column:id"`
 	Name        string `gorm:"column:app_name" `
@@ -15,10 +16,12 @@ type App struct {
 	UpdateTime  int64  `gorm:"column:update_time"`
 }
 
+// TableName ...
 func (App) TableName() string {
 	return "m_app"
 }
 
+// InsertApp ...
 func InsertApp(name, desc, key string) error {
 	create := db.Create(&App{
 		Name:        name,
@@ -30,6 +33,7 @@ func InsertApp(name, desc, key string) error {
 	return create.Error
 }
 
+// CheckAppKeyUnique ...
 func CheckAppKeyUnique(key string) bool {
 	first := db.Where(&App{Key: key}).First(&App{})
 	if first.Error == nil {
@@ -38,6 +42,7 @@ func CheckAppKeyUnique(key string) bool {
 	return true
 }
 
+// ListApps ...
 func ListApps(filter string, limit int, offset int) ([]*App, error) {
 	apps := make([]*App, 0)
 	fields := []string{"id", "app_name", "description", "app_key", "create_time", "update_time"}
@@ -48,6 +53,7 @@ func ListApps(filter string, limit int, offset int) ([]*App, error) {
 	return apps, nil
 }
 
+// DeleteApp ...
 func DeleteApp(id int) error {
 	app := &App{}
 	app.Id = id
@@ -58,6 +64,7 @@ func DeleteApp(id int) error {
 	return nil
 }
 
+// UpdateApp ...
 func UpdateApp(id int, name string, desc string) error {
 	app := &App{
 		Id:          id,
@@ -72,6 +79,7 @@ func UpdateApp(id int, name string, desc string) error {
 	return nil
 }
 
+// GetApp ...
 func GetApp(id int) (*App, error) {
 	f := &App{
 		Id: id,
@@ -83,6 +91,7 @@ func GetApp(id int) (*App, error) {
 	return f, nil
 }
 
+// CountApp ...
 func CountApp() (interface{}, error) {
 	var count int
 	c := db.Model(&App{}).Count(&count)

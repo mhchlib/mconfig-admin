@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// User ...
 type User struct {
 	Id         int    `gorm:"primary_key;AUTO_INCREMENT"  json:"id"`
 	Name       string `gorm:"type:varchar(128)" json:"name"`
@@ -17,14 +18,17 @@ type User struct {
 	UpdateTime int64  `gorm:"column:update_time" json:"update_time"`
 }
 
+// TableName ...
 func (User) TableName() string {
 	return "m_user"
 }
 
+// UserPayload ...
 type UserPayload struct {
 	UserId int
 }
 
+// InsertUser ...
 func InsertUser(name, passwd string) error {
 	salt := viper.GetString("user.salt")
 	create := db.Create(&User{
@@ -37,6 +41,7 @@ func InsertUser(name, passwd string) error {
 	return create.Error
 }
 
+// GetUserByName ...
 func GetUserByName(name string) (*User, error) {
 	f := &User{
 		Name: name,
@@ -48,6 +53,7 @@ func GetUserByName(name string) (*User, error) {
 	return f, nil
 }
 
+// CountUser ...
 func CountUser() (interface{}, error) {
 	var count int
 	c := db.Model(&User{}).Count(&count)

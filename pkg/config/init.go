@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Init ...
 func Init() {
 	viper.AddConfigPath("conf/")
 	err := viper.ReadInConfig() // Find and read the config file

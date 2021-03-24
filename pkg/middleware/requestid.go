@@ -5,6 +5,7 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+// RequestId ...
 func RequestId() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Check for incoming header, use it if exists

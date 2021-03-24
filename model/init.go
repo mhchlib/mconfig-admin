@@ -9,6 +9,7 @@ import (
 
 var db *gorm.DB
 
+// Init ...
 func Init() {
 	url := viper.GetString("db.url")
 	mdb, err := gorm.Open("mysql", url)
