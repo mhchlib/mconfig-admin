@@ -10,8 +10,8 @@ import (
 	"github.com/mhchlib/mconfig-api/api/v1/server"
 	"github.com/mhchlib/mconfig/core/mconfig"
 	"github.com/mhchlib/mconfig/core/store"
-	"github.com/mhchlib/register"
-	"github.com/mhchlib/register/registerOpts"
+	"github.com/mhchlib/mregister"
+	"github.com/mhchlib/mregister/register"
 	"google.golang.org/grpc"
 	"time"
 )
@@ -48,9 +48,9 @@ func DeployUpdateConfig(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(
-		registerOpts.Namespace(cluster.Namespace),
-		registerOpts.ResgisterAddress(cluster.Register),
+	regClient, err := mregister.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
@@ -214,9 +214,9 @@ func DeployUpdateFilter(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(
-		registerOpts.Namespace(cluster.Namespace),
-		registerOpts.ResgisterAddress(cluster.Register),
+	regClient, err := mregister.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
@@ -349,9 +349,9 @@ func DeployDeleteFilter(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(
-		registerOpts.Namespace(cluster.Namespace),
-		registerOpts.ResgisterAddress(cluster.Register),
+	regClient, err := mregister.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
@@ -446,9 +446,9 @@ func DeployDeleteConfig(c *gin.Context) {
 		return
 	}
 	//获取services
-	regClient, err := register.InitRegister(
-		registerOpts.Namespace(cluster.Namespace),
-		registerOpts.ResgisterAddress(cluster.Register),
+	regClient, err := mregister.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
