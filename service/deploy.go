@@ -11,6 +11,7 @@ import (
 	"github.com/mhchlib/mconfig/core/mconfig"
 	"github.com/mhchlib/mconfig/core/store"
 	"github.com/mhchlib/register"
+	"github.com/mhchlib/register/registerOpts"
 	"google.golang.org/grpc"
 	"time"
 )
@@ -48,8 +49,8 @@ func DeployUpdateConfig(c *gin.Context) {
 	}
 	//获取services
 	regClient, err := register.InitRegister(
-		register.Namespace(cluster.Namespace),
-		register.RegisterStr(cluster.Register),
+		registerOpts.Namespace(cluster.Namespace),
+		registerOpts.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
@@ -214,8 +215,8 @@ func DeployUpdateFilter(c *gin.Context) {
 	}
 	//获取services
 	regClient, err := register.InitRegister(
-		register.Namespace(cluster.Namespace),
-		register.RegisterStr(cluster.Register),
+		registerOpts.Namespace(cluster.Namespace),
+		registerOpts.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
@@ -349,8 +350,8 @@ func DeployDeleteFilter(c *gin.Context) {
 	}
 	//获取services
 	regClient, err := register.InitRegister(
-		register.Namespace(cluster.Namespace),
-		register.RegisterStr(cluster.Register),
+		registerOpts.Namespace(cluster.Namespace),
+		registerOpts.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
@@ -446,8 +447,8 @@ func DeployDeleteConfig(c *gin.Context) {
 	}
 	//获取services
 	regClient, err := register.InitRegister(
-		register.Namespace(cluster.Namespace),
-		register.RegisterStr(cluster.Register),
+		registerOpts.Namespace(cluster.Namespace),
+		registerOpts.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)

@@ -14,7 +14,7 @@ require (
 	github.com/mhchlib/logger v0.0.2
 	github.com/mhchlib/mconfig v0.0.0-00010101000000-000000000000
 	github.com/mhchlib/mconfig-api v0.0.1
-	github.com/mhchlib/register v0.0.1
+	github.com/mhchlib/register v0.0.0-20201023050446-420de20374cc
 	github.com/micro/go-micro/v2 v2.9.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/spf13/viper v1.7.1
