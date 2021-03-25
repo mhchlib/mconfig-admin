@@ -5,9 +5,8 @@ import (
 	log "github.com/mhchlib/logger"
 	"github.com/mhchlib/mconfig-admin/model"
 	"github.com/mhchlib/mconfig-admin/pkg/tools"
-	"github.com/mhchlib/register"
-	"github.com/mhchlib/register/common"
-	"github.com/mhchlib/register/registerOpts"
+	"github.com/mhchlib/mregister"
+	"github.com/mhchlib/mregister/register"
 	"strconv"
 )
 
@@ -135,7 +134,7 @@ func UpdateCluster(c *gin.Context) {
 // GetClusterRepsonse ...
 type GetClusterRepsonse struct {
 	*model.Cluster
-	Services []*common.ServiceVal `json:"services"`
+	Services []*register.ServiceVal `json:"services"`
 }
 
 // GetCluster ...
@@ -155,9 +154,9 @@ func GetCluster(c *gin.Context) {
 	Response.Cluster = cluster
 
 	//获取services
-	regClient, err := register.InitRegister(
-		registerOpts.Namespace(cluster.Namespace),
-		registerOpts.ResgisterAddress(cluster.Register),
+	regClient, err := mregister.InitRegister(
+		register.Namespace(cluster.Namespace),
+		register.ResgisterAddress(cluster.Register),
 	)
 	if err != nil {
 		tools.ResponseDefaultFail(c, err)
