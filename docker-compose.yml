@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+  mconfig-admin:
+    image: dockerhcy/mconfig-admin:649847f
+    container_name: mconfig-admin
+    restart: always
+    networks:
+      - mconfig
+    volumes:
+      - ./docker-compose/conf/config.ini:/app/conf/config.ini
+    ports:
+      - 8087
+
+  db:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mconfig-admin-db
+    restart: always
+    networks:
+      - mconfig
+    volumes:
+    - ./docker-compose/mysql/init:/docker-entrypoint-initdb.d/
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: passw0rd
+
+networks:
+  mconfig:
+    external: true
